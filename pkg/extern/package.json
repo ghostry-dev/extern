@@ -39,7 +39,7 @@
     "provenance": true
   },
   "devDependencies": {
-    "@ghostry/harness": "^0.0.4"
+    "@ghostry/harness": "^0.0.5"
   },
   "scripts": {
     "build:reset": "rm -rf ./dist",
