@@ -15,14 +15,14 @@
     },
     "pkg/extern": {
       "name": "@ghostry/extern",
-      "version": "0.0.14",
+      "version": "0.0.15",
       "devDependencies": {
         "@ghostry/harness": "^0.0.5",
       },
     },
     "pkg/extern-extension-fabricator-v0": {
       "name": "@ghostry/extern-extension-fabricator-v0",
-      "version": "0.0.4",
+      "version": "0.0.5",
       "devDependencies": {
         "@ghostry/extern": "workspace:*",
         "@ghostry/fabricator": "^0.0.11",
