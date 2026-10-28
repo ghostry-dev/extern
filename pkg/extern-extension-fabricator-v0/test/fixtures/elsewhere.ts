@@ -2,7 +2,7 @@ import type { Initialized } from "@ghostry/extern";
 import type { FabricatorLambda } from "../../src";
 
 /**
- * Opens a testing block from a *different file* than the suite that calls this.
+ * Opens a testing block from a _different file_ than the suite that calls this.
  *
  * Each testing block gets a fresh construction counter without a file-derived
  * salt, so an identical block run here draws the same value as one run in the

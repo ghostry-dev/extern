@@ -20,9 +20,9 @@ import {
 
 /**
  * These assertions are enforced by `tsc --noEmit` (the package's `check`
- * script, which `test` runs first), not by the runtime bodies below — a
- * failing one is a compile error, and the `it(...)` wrappers exist only to
- * keep the file legible alongside the rest of the suite.
+ * script, which `test` runs first), not by the runtime bodies below — a failing
+ * one is a compile error, and the `it(...)` wrappers exist only to keep the
+ * file legible alongside the rest of the suite.
  *
  * `Equals` is the invariant comparison rather than `extends` in both
  * directions, which is what lets it catch the failure that matters here: a
@@ -31,9 +31,9 @@ import {
  * configured extension ever claimed.
  */
 type Equals<$X, $Y> =
-  (<$P>() => $P extends $X ? 1 : 2) extends <$P>() => $P extends $Y ? 1 : 2 ?
-    true
-  : false;
+  (<$P>() => $P extends $X ? 1 : 2) extends <$P>() => $P extends $Y ? 1 : 2
+    ? true
+    : false;
 
 const assertType = <_$T extends true>(): void => {};
 
@@ -57,9 +57,9 @@ describe("the lambda `integration()` infers", () => {
     /**
      * The negative half. `$Lambda` has no inference site inside `Mocker` — it
      * appears only in a nested call signature's constraint — so inference has
-     * to come from `Initialized<$Lambda>` positionally. Were it to fall
-     * through instead, the `= never` default is what makes the failure loud;
-     * this pins that it is not silently the constraint.
+     * to come from `Initialized<$Lambda>` positionally. Were it to fall through
+     * instead, the `= never` default is what makes the failure loud; this pins
+     * that it is not silently the constraint.
      */
     assertType<
       Equals<

@@ -150,7 +150,7 @@ describe("a named block", () => {
    * The contrast, and the reason the pin is scoped to named blocks alone.
    * Construction order is all that distinguishes two unnamed blocks, so it has
    * to keep moving their values — this is the documented behavior the name is
-   * an opt-out *from*, not an inconsistency with the case above.
+   * an opt-out _from_, not an inconsistency with the case above.
    */
   it("leaves an unnamed block positional", async () => {
     let alone: Id | undefined;
@@ -228,11 +228,11 @@ describe("concurrency", () => {
 
 describe("a user's own ambient construction", () => {
   /**
-   * Deliberately *not* equal to the block's own value. Both draw from the same
+   * Deliberately _not_ equal to the block's own value. Both draw from the same
    * scope, so they take successive ordinals — an ambient `fabricate()` is a
-   * fresh draw, not a second view of the block's. Recorded because the
-   * opposite is the intuitive guess, and a reader who assumes it would write
-   * a test that passes for the wrong reason.
+   * fresh draw, not a second view of the block's. Recorded because the opposite
+   * is the intuitive guess, and a reader who assumes it would write a test that
+   * passes for the wrong reason.
    */
   it("draws distinctly from the block's own fabrication", async () => {
     await extern.testing(() => {

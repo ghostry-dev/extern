@@ -26,18 +26,18 @@ import {
 
 /**
  * These assertions are enforced by `tsc --noEmit` (the package's `check`
- * script, which `test` runs first), not by the runtime bodies below — a
- * failing one is a compile error, and the `it(...)` wrappers exist only to
- * keep the file legible alongside the rest of the suite.
+ * script, which `test` runs first), not by the runtime bodies below — a failing
+ * one is a compile error, and the `it(...)` wrappers exist only to keep the
+ * file legible alongside the rest of the suite.
  *
- * `Equals` is the invariant comparison, not `extends` in both directions:
- * the latter reports `any` as equal to everything, which is exactly the
- * failure mode these assertions need to catch.
+ * `Equals` is the invariant comparison, not `extends` in both directions: the
+ * latter reports `any` as equal to everything, which is exactly the failure
+ * mode these assertions need to catch.
  */
 type Equals<$X, $Y> =
-  (<$P>() => $P extends $X ? 1 : 2) extends <$P>() => $P extends $Y ? 1 : 2 ?
-    true
-  : false;
+  (<$P>() => $P extends $X ? 1 : 2) extends <$P>() => $P extends $Y ? 1 : 2
+    ? true
+    : false;
 
 /**
  * A call rather than a `type _ = Expect<…>` alias: an unused type alias trips
@@ -273,13 +273,12 @@ describe("the `produce()` gate", async () => {
 });
 
 /**
- * `HandleOf` is the second type-level function, and the *separation* it rests
+ * `HandleOf` is the second type-level function, and the _separation_ it rests
  * on is what these assert. Putting `Of`/`Handle` on the base `TypeLambda`
- * resolves correctly in isolation and then poisons any union: an extension
- * that never declares `Handle` still inherits `Handle: unknown`, and
- * `Box<string> | unknown` is `unknown`. One observer extension beside a
- * handle-bearing one would collapse `via` to `unknown` for every identity in
- * the instance.
+ * resolves correctly in isolation and then poisons any union: an extension that
+ * never declares `Handle` still inherits `Handle: unknown`, and `Box<string> |
+ * unknown` is `unknown`. One observer extension beside a handle-bearing one
+ * would collapse `via` to `unknown` for every identity in the instance.
  */
 describe("`HandleOf`", () => {
   it("resolves a declared handle, and `never` for a lambda without one", () => {
@@ -380,8 +379,8 @@ describe("the `produce(fn)` gate", async () => {
 
   /**
    * The callback form is what `never` withdraws, not the terminal: a
-   * handle-less extension can still produce perfectly well, it just has
-   * nothing to hand a callback.
+   * handle-less extension can still produce perfectly well, it just has nothing
+   * to hand a callback.
    */
   it("withholds the callback from a handle-less extension, keeping `produce()`", async () => {
     await handleless.testing((mock) => {
@@ -406,10 +405,10 @@ describe("the `produce(fn)` gate", async () => {
 
       /**
        * The single-argument form matters most: it is the one that would
-       * silently swallow a callback if this gate regressed, rather than
-       * failing on arity. It is rejected because the sole remaining signature
-       * takes `Options`, and a function has no property in common with it —
-       * which holds as long as `Options` stays a weak (all-optional) type.
+       * silently swallow a callback if this gate regressed, rather than failing
+       * on arity. It is rejected because the sole remaining signature takes
+       * `Options`, and a function has no property in common with it — which
+       * holds as long as `Options` stays a weak (all-optional) type.
        *
        * Read afterwards rather than left unused, since the mock is really
        * registered: the rejection is the compiler's alone, and at runtime the
@@ -492,8 +491,8 @@ describe("the `Extension` union", () => {
 
   it("rejects all four states the single interface allowed", () => {
     /**
-     * On the declaration, not on a property: a *missing* required member is
-     * reported where the literal is assigned, while a *wrong* one is reported
+     * On the declaration, not on a property: a _missing_ required member is
+     * reported where the literal is assigned, while a _wrong_ one is reported
      * on the offending line. The directive has to sit above whichever it is.
      */
     // @ts-expect-error — a producer must declare `supports`.
@@ -552,9 +551,9 @@ describe("the `Extension` union", () => {
   });
 
   /**
-   * The reason `kind` exists. Without a discriminant TypeScript cannot select
-   * a member of the union, so contextual typing for `scope`'s parameters
-   * collapses and even a *valid* extension fails to compile with "parameter
+   * The reason `kind` exists. Without a discriminant TypeScript cannot select a
+   * member of the union, so contextual typing for `scope`'s parameters
+   * collapses and even a _valid_ extension fails to compile with "parameter
    * implicitly has an 'any' type" under `noImplicitAny`.
    *
    * `_o` and `block` are deliberately left un-annotated: that is the whole
@@ -635,8 +634,8 @@ describe("`Testing`", () => {
 
 /**
  * Guards the `Boxed`/`Tagged` fixtures themselves: if either lambda stopped
- * being structurally narrow, it would start claiming unrelated values and
- * every gate above would pass for the wrong reason.
+ * being structurally narrow, it would start claiming unrelated values and every
+ * gate above would pass for the wrong reason.
  */
 describe("the stub lambdas", () => {
   it("do not claim each other's identities", () => {

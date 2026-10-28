@@ -12,8 +12,8 @@ export abstract class ExternError extends Error {
 }
 
 /**
- * The error thrown when an object is provided to `extern.validated`
- * that does not conform to the Standard Schema interface.
+ * The error thrown when an object is provided to `extern.validated` that does
+ * not conform to the Standard Schema interface.
  */
 export class InvalidSchemaError extends ExternError {
   constructor() {
@@ -24,8 +24,8 @@ export class InvalidSchemaError extends ExternError {
 }
 
 /**
- * The error thrown during an `extern.validated` block if the block
- * function's return value does not conform to the specified schema.
+ * The error thrown during an `extern.validated` block if the block function's
+ * return value does not conform to the specified schema.
  */
 export class InvalidDataTypeError extends ExternError {
   constructor(
@@ -46,8 +46,8 @@ export class InvalidDataTypeError extends ExternError {
 }
 
 /**
- * The error thrown during concurrently executing `extern.testing` blocks
- * when the library has not been allowed execute them concurrently.
+ * The error thrown during concurrently executing `extern.testing` blocks when
+ * the library has not been allowed execute them concurrently.
  */
 export class IllegalConcurrencyTestingError extends ExternError {
   constructor() {
@@ -77,8 +77,8 @@ export class DuplicateMockError extends ExternError {
 }
 
 /**
- * The error thrown during an `extern.testing` block when an extern block
- * has not been mocked.
+ * The error thrown during an `extern.testing` block when an extern block has
+ * not been mocked.
  */
 export class NotMockedError extends ExternError {
   constructor() {
@@ -134,15 +134,15 @@ export class ExtensionUnavailableError extends ExternError {
 }
 
 /**
- * The error thrown when more than one configured extension recognizes the
- * same identity.
+ * The error thrown when more than one configured extension recognizes the same
+ * identity.
  *
  * Refused rather than resolved by order. When two lambdas both match an
  * identity, TypeScript picks which one determines the block's type by its own
  * inference-candidate selection — not by the order the extensions were passed
- * in — so no runtime dispatch rule can be guaranteed to agree with the type
- * the caller was handed. Erroring at the point of use is the only outcome
- * that cannot silently disagree.
+ * in — so no runtime dispatch rule can be guaranteed to agree with the type the
+ * caller was handed. Erroring at the point of use is the only outcome that
+ * cannot silently disagree.
  */
 export class AmbiguousIdentityError extends ExternError {
   constructor(
@@ -166,8 +166,8 @@ export class AmbiguousIdentityError extends ExternError {
  * Carries every failure rather than the first: cleanups settle innermost-first
  * and one throwing does not stop its siblings, so reporting only one would hide
  * the rest. A named error rather than an `AggregateError` because this library
- * targets ES2019, and because a structured `errors` list matches how every other
- * error here carries its detail.
+ * targets ES2019, and because a structured `errors` list matches how every
+ * other error here carries its detail.
  *
  * Thrown only when the testing block itself passed. When the block failed, its
  * own error is the one worth reading, so this is logged instead and the block's
@@ -194,8 +194,8 @@ export class CleanupFailedError extends ExternError {
 }
 
 /**
- * The error thrown at the end of an `extern.testing` block if there were
- * any mocks defined that were never used.
+ * The error thrown at the end of an `extern.testing` block if there were any
+ * mocks defined that were never used.
  */
 export class UnusedMocksError extends ExternError {
   constructor(

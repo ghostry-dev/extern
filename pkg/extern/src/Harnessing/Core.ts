@@ -16,9 +16,9 @@ const refuse = (): never => {
 /**
  * Built the way `mocking()` builds the real one — a callable carrying an
  * `effect` member — because a mocker missing `effect` would surface as a
- * `TypeError` on property access rather than as the error this exists to
- * raise. `Spyable.ForEffect.Interface` is `{ named }` alone (`Spy.ts`), so
- * refusing there covers the whole effect surface.
+ * `TypeError` on property access rather than as the error this exists to raise.
+ * `Spyable.ForEffect.Interface` is `{ named }` alone (`Spy.ts`), so refusing
+ * there covers the whole effect surface.
  *
  * One shared value: it holds no state, and nothing about it varies per
  * instance.
@@ -51,7 +51,7 @@ const unavailable = <$Lambda extends TypeLambda>(): Mocking<$Lambda> =>
  * `UnusedMocksError` out of a `beforeAll` for the trouble.
  *
  * `provides.extern` therefore hands back a stand-in that refuses on use. A
- * throwing *provider* is not an option: harness runs every provider eagerly on
+ * throwing _provider_ is not an option: harness runs every provider eagerly on
  * every framed invocation, touched or not, so one would fail every suite hook
  * in the suite rather than only the hooks that reach for a mocker.
  *

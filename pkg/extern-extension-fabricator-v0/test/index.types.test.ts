@@ -10,9 +10,9 @@ import { fabricatorExtension } from "../src";
  * and the `it(...)` wrappers only keep this file legible beside the rest.
  */
 type Equals<$X, $Y> =
-  (<$P>() => $P extends $X ? 1 : 2) extends <$P>() => $P extends $Y ? 1 : 2 ?
-    true
-  : false;
+  (<$P>() => $P extends $X ? 1 : 2) extends <$P>() => $P extends $Y ? 1 : 2
+    ? true
+    : false;
 
 const assertType = <_$T extends true>(): void => {};
 
@@ -139,8 +139,8 @@ describe("a schema whose value may be `undefined` or `null`", () => {
       }));
 
     /**
-     * `undefinable` stays a required key whose value may be `undefined`;
-     * only `optional` is a key that may be absent.
+     * `undefinable` stays a required key whose value may be `undefined`; only
+     * `optional` is a key that may be absent.
      */
     assertType<
       Equals<
@@ -313,7 +313,7 @@ describe("the `produce()` gate", () => {
   });
 
   /**
-   * Offered for *every* fabricator kind, not object schemas alone. The handle
+   * Offered for _every_ fabricator kind, not object schemas alone. The handle
    * is the built Fabricator, and every kind's carries `fabricate()`, `trace`,
    * and `schema` — per-call overrides are just one object-only feature of it.
    */

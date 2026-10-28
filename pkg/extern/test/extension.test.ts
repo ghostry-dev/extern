@@ -76,8 +76,8 @@ describe("an extension", () => {
 
     /**
      * The cache is keyed by name within an identity, so two differently-named
-     * blocks over one schema stay distinct — the remedy for two concurrent
-     * code paths that must not share a value.
+     * blocks over one schema stay distinct — the remedy for two concurrent code
+     * paths that must not share a value.
      */
     it("keeps differently-named blocks over one identity distinct", async () => {
       const extern = await initialize({ extensions: [boxedExtension()] });
@@ -189,8 +189,8 @@ describe("an extension", () => {
       await extern.testing((mock) => {
         /**
          * Unreachable through the public types — `produce()` is not on the
-         * interface for an instance with no extensions — so the cast stands
-         * in for a plain JavaScript caller, which has no such guard.
+         * interface for an instance with no extensions — so the cast stands in
+         * for a plain JavaScript caller, which has no such guard.
          */
         (mock(schema as never) as { produce: () => void }).produce();
 
@@ -217,7 +217,7 @@ describe("an extension", () => {
      * The handle is built by the extension around the value it would have
      * produced anyway, so a callback that shapes nothing lands exactly where
      * the no-callback form does. That equivalence is what makes shaping a
-     * *modification* of a production rather than a separate one.
+     * _modification_ of a production rather than a separate one.
      */
     it("agrees with `produce()` when the callback shapes nothing", async () => {
       const extern = await initialize({ extensions: [boxedExtension()] });
@@ -260,9 +260,9 @@ describe("an extension", () => {
       const extern = await initialize({ extensions: [boxedExtension()] });
 
       /**
-       * Resolves without the block ever running, which is the whole point:
-       * the second argument really is reaching `Options`, not being swallowed
-       * as part of the callback form.
+       * Resolves without the block ever running, which is the whole point: the
+       * second argument really is reaching `Options`, not being swallowed as
+       * part of the callback form.
        */
       await extern.testing((mock) => {
         mock(boxed<string>("a")).produce(({ via }) => via.build(), {
@@ -325,9 +325,9 @@ describe("an extension", () => {
 
   /**
    * Caching is not an optimization here. The boxed fixture folds a per-scope
-   * ordinal into every value it produces — standing in for the
-   * per-construction state a real extension derives distinctness from — so an
-   * uncached path would visibly hand back a different value on each read.
+   * ordinal into every value it produces — standing in for the per-construction
+   * state a real extension derives distinctness from — so an uncached path
+   * would visibly hand back a different value on each read.
    */
   describe("the production cache", () => {
     it("makes two reads of a `produce()`d block agree", async () => {
@@ -479,7 +479,7 @@ describe("an extension", () => {
 
   /**
    * Producing is one of the two variants an extension can be, not what an
-   * extension *is*. A debugging or reporting helper wants a scope per testing
+   * extension _is_. A debugging or reporting helper wants a scope per testing
    * block and nothing else — so configuring one must not change how any block
    * behaves.
    */
@@ -585,9 +585,9 @@ describe("an extension", () => {
     /**
      * Refused rather than resolved by order: when two lambdas both match,
      * TypeScript picks the produced type by its own inference-candidate
-     * selection, independent of the order the extensions were passed in, so
-     * no runtime dispatch rule is guaranteed to agree with the type the
-     * caller was handed.
+     * selection, independent of the order the extensions were passed in, so no
+     * runtime dispatch rule is guaranteed to agree with the type the caller was
+     * handed.
      */
     it("refuses an identity two extensions both claim", async () => {
       const extern = await initialize({

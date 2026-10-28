@@ -10,13 +10,13 @@ import {
 import type { Extension } from "../src/Extension";
 
 /**
- * The two hazards a per-block extension scope has to get right, each written the
- * way an extension author would naturally write it.
+ * The two hazards a per-block extension scope has to get right, each written
+ * the way an extension author would naturally write it.
  *
- * Neither is about *capability* — both are expressible under any contract if you
- * already know the trap. They are about whether the obvious code is the correct
- * code, which is the property worth protecting: a scope that brackets a block,
- * and a scope whose own setup fails partway.
+ * Neither is about _capability_ — both are expressible under any contract if
+ * you already know the trap. They are about whether the obvious code is the
+ * correct code, which is the property worth protecting: a scope that brackets a
+ * block, and a scope whose own setup fails partway.
  */
 
 /** Stands in for any resource an extension establishes for the block's duration. */
@@ -39,7 +39,10 @@ describe("trap 1: the extension's own setup throws", () => {
       p.acquired += 1;
 
       try {
-        /** Derived from the handle, and fallible — a connection's handshake, say. */
+        /**
+         * Derived from the handle, and fallible — a connection's handshake,
+         * say.
+         */
         const derive = (): string => {
           throw new Error("setup failed");
         };
@@ -122,7 +125,7 @@ describe("trap 2: teardown written as a bracket around the body", () => {
 
 describe("a wrapper's scope reaches its own teardown", () => {
   /**
-   * The load-bearing detail of the descent: the resumption is chained *inside*
+   * The load-bearing detail of the descent: the resumption is chained _inside_
    * the wrapper's callback. A continuation runs in the async context active
    * where it was chained, so resuming from outside would find the
    * `AsyncLocalStorage` frame the wrapper opened already gone.

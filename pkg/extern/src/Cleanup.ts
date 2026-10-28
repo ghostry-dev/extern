@@ -12,12 +12,12 @@ export type Outcome =
   | { readonly ok: false; readonly error: unknown };
 
 /**
- * Teardown for one open extension scope, carried on the `Session` that
- * scope yielded — which is what gives it lexical access to whatever the scope
+ * Teardown for one open extension scope, carried on the `Session` that scope
+ * yielded — which is what gives it lexical access to whatever the scope
  * established, with no mutable variable in between.
  *
- * May be async; a thenable is settled before the value reaches the caller, so an
- * outer scope's cleanup runs only once an inner one has finished.
+ * May be async; a thenable is settled before the value reaches the caller, so
+ * an outer scope's cleanup runs only once an inner one has finished.
  */
 export type Cleanup = (outcome: Outcome) => void | PromiseLike<void>;
 
@@ -39,19 +39,19 @@ const report = (errors: readonly unknown[], outcome: Outcome): void => {
 };
 
 /**
- * Settle one extension's `cleanup` against `block`, *inside* that extension's
+ * Settle one extension's `cleanup` against `block`, _inside_ that extension's
  * own open scope.
  *
  * Where it runs is what lets teardown reach what the scope established; a
  * continuation chained outside every scope would find an `AsyncLocalStorage`
- * frame already gone. Where its error is *collected* is a separate question, and
- * the answer is `errors` — one list owned by the composed scope, so several
+ * frame already gone. Where its error is _collected_ is a separate question,
+ * and the answer is `errors` — one list owned by the composed scope, so several
  * extensions' failures still report as a single `CleanupFailedError` rather
  * than one at a time.
  *
  * Ordering needs no coordination: each scope encloses the next, so an inner
  * cleanup has settled by the time an outer one is reached, and an outer cleanup
- * waits on an inner *async* one.
+ * waits on an inner _async_ one.
  *
  * `aggregates` marks the outermost cleanup-bearing scope, whose settlement is
  * therefore the last — the only point at which `errors` is final. Nothing else

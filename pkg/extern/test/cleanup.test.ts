@@ -7,8 +7,8 @@ import { isThenable } from "../src/Util";
 import { boxed, type BoxedLambda } from "./fixtures/extension";
 
 /**
- * An observer with teardown, written the way an extension author writes one: the
- * cleanup rides on the session the scope already yields, so it closes over
+ * An observer with teardown, written the way an extension author writes one:
+ * the cleanup rides on the session the scope already yields, so it closes over
  * whatever that scope established with nothing threaded in between.
  */
 const observer = (log: string[], name: string): Extension => ({

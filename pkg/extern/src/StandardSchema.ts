@@ -5,7 +5,7 @@
 /** The Standard Schema interface. */
 export interface StandardSchemaV1<Input = unknown, Output = Input> {
   /** The Standard Schema properties. */
-  readonly '~standard': StandardSchemaV1.Props<Input, Output>;
+  readonly "~standard": StandardSchemaV1.Props<Input, Output>;
 }
 
 export declare namespace StandardSchemaV1 {
@@ -64,11 +64,11 @@ export declare namespace StandardSchemaV1 {
 
   /** Infers the input type of a Standard Schema. */
   export type InferInput<Schema extends StandardSchemaV1> = NonNullable<
-    Schema['~standard']['types']
-  >['input'];
+    Schema["~standard"]["types"]
+  >["input"];
 
   /** Infers the output type of a Standard Schema. */
   export type InferOutput<Schema extends StandardSchemaV1> = NonNullable<
-    Schema['~standard']['types']
-  >['output'];
+    Schema["~standard"]["types"]
+  >["output"];
 }

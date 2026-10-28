@@ -12,8 +12,8 @@ import { isThenable } from "./Util";
  * something — an `AsyncLocalStorage` scope, a library's own `wrap`, a pooled
  * connection's callback.
  *
- * Yielded from {@link Frame} in place of a session; extern applies it, passing a
- * `body` that must be called exactly once and whose value must be returned
+ * Yielded from {@link Frame} in place of a session; extern applies it, passing
+ * a `body` that must be called exactly once and whose value must be returned
  * unchanged. What the wrapper passes to `body` is the session, which is how a
  * scoped thing reaches `produce` with no mutable variable in between.
  */
@@ -30,9 +30,9 @@ export type Wrapper<$Session extends Session = Session> = <$Return>(
  * itself, or a {@link Wrapper} that establishes one and runs the block inside
  * it. Everything after the `yield` is teardown.
  *
- * `async function*` works and promotes the block to a promise. A **synchronous**
- * generator cannot await its teardown, since it resumes synchronously, so
- * teardown that must be awaited needs `async function*`.
+ * `async function*` works and promotes the block to a promise. A
+ * **synchronous** generator cannot await its teardown, since it resumes
+ * synchronously, so teardown that must be awaited needs `async function*`.
  */
 export type Frame<$Session extends Session = Session> =
   | Generator<$Session | Wrapper<$Session>, void, Outcome>

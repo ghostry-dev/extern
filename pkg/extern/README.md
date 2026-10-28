@@ -18,8 +18,7 @@ Provides the most seamless approach to typed dependency injection for test suite
 import { initialize } from "@ghostry/extern";
 
 /**
- * Initialize an instance of the library with optional
- * configuration.
+ * Initialize an instance of the library with optional configuration.
  */
 export const extern = await initialize({});
 ```
@@ -35,18 +34,18 @@ import { extern } from "./extern.ts";
 /**
  * The function to be mocked.
  *
- * For demonstration, it performs some simple math, but it represents
- * an interaction with an external system which would not be within
- * the intended scope of a unit test.
+ * For demonstration, it performs some simple math, but it represents an
+ * interaction with an external system which would not be within the intended
+ * scope of a unit test.
  */
 function computeSomething(x: string) {
   return x + " brown";
 }
 
 /**
- * A function that represents interaction with an external system,
- * but unlike the other example function above, this does not return
- * anything useful to the calling code.
+ * A function that represents interaction with an external system, but unlike
+ * the other example function above, this does not return anything useful to the
+ * calling code.
  */
 function doSomething() {
   console.log("jumped over the lazy dog");
@@ -107,60 +106,57 @@ import { test, expect } from "bun:test";
 
 test("example test", async () => {
   /**
-   * By default, the function to test will still execute its
-   * external interaction even though it was wrapped at its
-   * source.  This prevents immediately breaking any existing
-   * tests written for the function.
+   * By default, the function to test will still execute its external
+   * interaction even though it was wrapped at its source. This prevents
+   * immediately breaking any existing tests written for the function.
    */
   expect(example()).toEqual("quick brown fox");
 
   /**
    * Enable dependency-injection style mocking.
    *
-   * This begins tracking uses of `extern` at runtime with
-   * their associated schema definition.
+   * This begins tracking uses of `extern` at runtime with their associated
+   * schema definition.
    *
-   * The `testing` function receives a function to mock uses
-   * of `extern` with static test data.
+   * The `testing` function receives a function to mock uses of `extern` with
+   * static test data.
    *
-   * It identifies which external interaction to mock by the
-   * schema definition used.  (In many cases, this will be
-   * sufficient, but disambiguation is possible as necessary.)
+   * It identifies which external interaction to mock by the schema definition
+   * used. (In many cases, this will be sufficient, but disambiguation is
+   * possible as necessary.)
    *
-   * Effect blocks (unlike value blocks) do not need to be
-   * mocked as they will always be skipped.  (Spying on
-   * them is still possible though.)
+   * Effect blocks (unlike value blocks) do not need to be mocked as they will
+   * always be skipped. (Spying on them is still possible though.)
    */
   await extern.testing((mock) => {
     /**
-     * The mocking data must conform to the schema type.  This
-     * is enforced by TypeScript.
+     * The mocking data must conform to the schema type. This is enforced by
+     * TypeScript.
      *
-     * Each mock returns a dedicated spy which can be used
-     * later to inspect executions that used the mock.
+     * Each mock returns a dedicated spy which can be used later to inspect
+     * executions that used the mock.
      *
-     * The definition of mocks is the same whether using
-     * `typed` or `validated` mode.
+     * The definition of mocks is the same whether using `typed` or `validated`
+     * mode.
      */
     const spy = mock(identity).with("a");
 
     /**
-     * The function will not execute the external interactions.
-     * Instead, the mocked data will be returned in its place.
-     * Thus, the result is different, as expected.
+     * The function will not execute the external interactions. Instead, the
+     * mocked data will be returned in its place. Thus, the result is different,
+     * as expected.
      */
     expect(example()).toEqual("a fox");
 
     /**
-     * Assertions can be made about the mocked executions
-     * that have occurred.
+     * Assertions can be made about the mocked executions that have occurred.
      */
     expect(spy.executions).toHaveLength(1);
   });
 
   /**
-   * Outside of the testing block, all wrapped interactions
-   * will run normally, including effects.
+   * Outside of the testing block, all wrapped interactions will run normally,
+   * including effects.
    */
   expect(example()).toEqual("quick brown fox");
 });
@@ -236,8 +232,8 @@ But you may wish to make assertions in your tests about the data that was provid
 ```ts
 function comments(postId: number) {
   /**
-   * Parameter for extern block function is provided without
-   * the need for a closure.
+   * Parameter for extern block function is provided without the need for a
+   * closure.
    */
   return extern.typed.by(schema).given(postId).will(fetchComments);
 }
@@ -290,16 +286,14 @@ extern.typed
 
 ```ts
 /**
- * This mock targets all extern blocks using the schema,
- * regardless of any disambiguations that may be assigned
- * to the extern block.
+ * This mock targets all extern blocks using the schema, regardless of any
+ * disambiguations that may be assigned to the extern block.
  */
 mock(schema).with(321);
 
 /**
- * This mock targets all extern blocks using the schema
- * that have been named "abc", taking priority over
- * less-specific mocks that would otherwise apply.
+ * This mock targets all extern blocks using the schema that have been named
+ * "abc", taking priority over less-specific mocks that would otherwise apply.
  */
 mock(schema).named("abc").with(789);
 ```
@@ -382,8 +376,8 @@ Named effects can be observed during a test in one of two ways:
 
 ```ts
 /**
- * Tracks executions and continues to suppress the original
- * function (the default behavior for effects in tests).
+ * Tracks executions and continues to suppress the original function (the
+ * default behavior for effects in tests).
  */
 const spy = mock.effect.named("track view").observe();
 

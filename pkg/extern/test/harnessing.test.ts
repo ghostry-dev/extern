@@ -38,8 +38,8 @@ const real = (extern: Initialized): { readonly id: number } =>
   extern.typed.by(Id).will(() => ({ id: -1 }));
 
 /**
- * A recording framework and a harness wrapped around it. Bodies are *invoked
- * directly* rather than by a runner, which is what keeps a return value
+ * A recording framework and a harness wrapped around it. Bodies are _invoked
+ * directly_ rather than by a runner, which is what keeps a return value
  * inspectable — the synchronous cases below assert that nothing in the chain
  * promoted one to a promise.
  */
@@ -159,7 +159,8 @@ describe("a framed test body", () => {
   /**
    * The largest consequence of installing this integration, and the one that
    * reaches tests nobody thinks of as extern tests: every body is now inside a
-   * block, so a block that previously ran its original function raises instead.
+   * block, so a block that previously ran its original function raises
+   * instead.
    */
   it("raises NotMockedError for a block it has no mock for", async () => {
     const extern = await initialize({ scope: "async" });
@@ -217,9 +218,9 @@ describe("isolation between tests", () => {
 describe("hooks", () => {
   /**
    * `beforeEach`/`afterEach` are not separately framed: harness runs them
-   * inside the innermost wrapper, around the body. So they are inside the
-   * block — a mock defined in one is live for the test, and `afterEach` can
-   * still read what it recorded.
+   * inside the innermost wrapper, around the body. So they are inside the block
+   * — a mock defined in one is live for the test, and `afterEach` can still
+   * read what it recorded.
    */
   it("runs beforeEach and afterEach inside the block", async () => {
     const extern = await initialize({ scope: "async" });

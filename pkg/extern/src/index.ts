@@ -71,8 +71,8 @@ export interface Initialized<$Lambda extends TypeLambda = never> {
   readonly effect: Effect;
 
   /**
-   * Run a supplied function in a testing context in which to mock source
-   * extern blocks.
+   * Run a supplied function in a testing context in which to mock source extern
+   * blocks.
    *
    * Returns the body's value unchanged: a sync body stays sync, an async body
    * stays a promise.
@@ -80,21 +80,22 @@ export interface Initialized<$Lambda extends TypeLambda = never> {
   readonly testing: Testing<$Lambda>;
 
   /**
-   * Build a type-only stand-in for a real schema, usable as the identity
-   * passed to `typed.by()` (and `mock()` inside a testing block).
+   * Build a type-only stand-in for a real schema, usable as the identity passed
+   * to `typed.by()` (and `mock()` inside a testing block).
    */
   readonly T: typeof T;
 }
 
 /**
- * Initializes an instance of the usable library API according to the
- * provided configuration.
+ * Initializes an instance of the usable library API according to the provided
+ * configuration.
  *
  * `$Extensions` is inferred from the `extensions` array itself, so the accepted
- * identity set widens with no explicit type argument: `$Extensions[number]` is the
- * union of the element types, and `LambdaOf` distributes over it to give the
- * union of their lambdas. With no extensions `$Extensions` is `[]`, `$Extensions[number]` is
- * `never`, and every identity type stays exactly as it was.
+ * identity set widens with no explicit type argument: `$Extensions[number]` is
+ * the union of the element types, and `LambdaOf` distributes over it to give
+ * the union of their lambdas. With no extensions `$Extensions` is `[]`,
+ * `$Extensions[number]` is `never`, and every identity type stays exactly as it
+ * was.
  */
 export const initialize = async <
   $Extensions extends readonly Extension.Any[] = readonly [],

@@ -4,10 +4,10 @@ import { ExtensionUnavailableError } from "./Error";
 import type { AnyIdentity } from "./Types";
 
 /**
- * Should a block with this identity and no matching mock produce a value
- * rather than throwing `NotMockedError`?
+ * Should a block with this identity and no matching mock produce a value rather
+ * than throwing `NotMockedError`?
  *
- * True only when some configured extension claims the identity *and* that
+ * True only when some configured extension claims the identity _and_ that
  * extension leaves `unmocked` at its `"produce"` default. Sourced from the
  * extension rather than from extern's own configuration, so opting out of
  * implicit production without having an extension at all stays
@@ -25,21 +25,20 @@ export const shouldProduce = (
 };
 
 /**
- * Look up or produce a value for `identity`, keyed by `named` within the
- * active testing block's cache — see `Context.productions` for why that cache
- * is load-bearing rather than an optimization.
+ * Look up or produce a value for `identity`, keyed by `named` within the active
+ * testing block's cache — see `Context.productions` for why that cache is
+ * load-bearing rather than an optimization.
  *
  * `using` carries a `produce(fn)` callback through to the extension, which is
  * the only party able to build the handle it expects. It participates in the
  * cache like everything else: the callback runs once per `(identity, named)`,
  * so two reads of one block agree.
  *
- * The unmocked branch in the cores reaches this only after `shouldProduce`
- * has already confirmed an extension claims the identity, so the missing
- * producer is unreachable there. A `produce()` mock reaches it through the
- * cores' `case "produce"` with no such guard, and a plain JavaScript consumer
- * has no type-level protection at all — hence a real error rather than an
- * assertion.
+ * The unmocked branch in the cores reaches this only after `shouldProduce` has
+ * already confirmed an extension claims the identity, so the missing producer
+ * is unreachable there. A `produce()` mock reaches it through the cores' `case
+ * "produce"` with no such guard, and a plain JavaScript consumer has no
+ * type-level protection at all — hence a real error rather than an assertion.
  */
 export const produce = (
   context: Context,

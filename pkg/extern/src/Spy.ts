@@ -36,7 +36,7 @@ export namespace Execution {
   export type ForValue<$Out = unknown> = Base & {
     /**
      * How the source extern block settled. Always present: an execution is
-     * recorded on *both* paths out of the block, so a `skip()`ped block whose
+     * recorded on _both_ paths out of the block, so a `skip()`ped block whose
      * original function threw is still recorded — and still counts as used by
      * `disallowUnusedMocks`, which would otherwise report a mock that plainly
      * did run as unused.
@@ -48,19 +48,19 @@ export namespace Execution {
    * How one use of a value block settled — the value it handed back, or the
    * error it threw. A union rather than an optional `returned`, because a
    * throwing block has no value to report and every strategy can throw: the
-   * original function under `skip()`, and production itself under
-   * `produce()` (an extension's own resolver, a caller's own `via` callback,
-   * an unsatisfiable schema, or no extension available at all).
+   * original function under `skip()`, and production itself under `produce()`
+   * (an extension's own resolver, a caller's own `via` callback, an
+   * unsatisfiable schema, or no extension available at all).
    *
-   * `"threw"` is purely a record of what happened. The error is always
-   * rethrown — extern never swallows one — so a test asserting a block throws
-   * behaves exactly as it did before, and can now additionally assert on what
-   * was thrown.
+   * `"threw"` is purely a record of what happened. The error is always rethrown
+   * — extern never swallows one — so a test asserting a block throws behaves
+   * exactly as it did before, and can now additionally assert on what was
+   * thrown.
    *
    * Under `typed`, which is synchronous, `value` is whatever the block handed
-   * back — for an async block, the un-awaited promise, and a later rejection
-   * is not reflected here. `validated` awaits internally, so it always
-   * records a settled value.
+   * back — for an async block, the un-awaited promise, and a later rejection is
+   * not reflected here. `validated` awaits internally, so it always records a
+   * settled value.
    */
   export type Outcome<$Out = unknown> =
     | { readonly kind: "returned"; readonly value: $Out }
@@ -74,8 +74,8 @@ export namespace Execution {
 }
 
 /**
- * Defining a mock returns this spy interface that can be used to
- * make assertions about the use of the mock and its identity.
+ * Defining a mock returns this spy interface that can be used to make
+ * assertions about the use of the mock and its identity.
  */
 export type Spy<$Out = unknown> = Spy.Any<$Out>;
 
@@ -117,7 +117,7 @@ export namespace Spy {
       /** The mock/spy strategy for a value block. */
       export type Any<$Out> = Substitute<$Out> | Passthrough | Produce;
 
-      /** Substitution strategy for a value block.*/
+      /** Substitution strategy for a value block. */
       export type Substitute<$Out> = {
         readonly kind: "substitute";
         readonly value: $Out;
@@ -159,10 +159,10 @@ export namespace Spy {
  * against what `$Lambda` admits.
  *
  * This is what replaces an overload. Discrimination has to key on the
- * *identity's own type*, while a single signature generic over the identity's
+ * _identity's own type_, while a single signature generic over the identity's
  * **produced** type cannot tell the cases apart — an extension's schema
- * producing `number` and a Standard Schema producing `number` both infer
- * `$Out = number`. Matching `$Identity` against `Apply<$Lambda, infer $Out>`
+ * producing `number` and a Standard Schema producing `number` both infer `$Out
+ * = number`. Matching `$Identity` against `Apply<$Lambda, infer $Out>`
  * discriminates and recovers the produced type in one step.
  *
  * With no extensions `$Lambda` is `never`, `Apply<never, …>` is `never`, and
@@ -170,12 +170,13 @@ export namespace Spy {
  * interface entirely for instances that never opted in.
  */
 export type Spyable<$Identity, $Lambda extends TypeLambda> =
-  $Identity extends Apply<$Lambda, infer $Out> ?
-    Spyable.ForValue.Producible.Interface<$Out, HandleOf<$Lambda, $Identity>>
-  : $Identity extends StandardSchemaV1<infer $Out> ?
-    Spyable.ForValue.Interface<$Out>
-  : $Identity extends T<infer $Out> ? Spyable.ForValue.Interface<$Out>
-  : never;
+  $Identity extends Apply<$Lambda, infer $Out>
+    ? Spyable.ForValue.Producible.Interface<$Out, HandleOf<$Lambda, $Identity>>
+    : $Identity extends StandardSchemaV1<infer $Out>
+      ? Spyable.ForValue.Interface<$Out>
+      : $Identity extends T<infer $Out>
+        ? Spyable.ForValue.Interface<$Out>
+        : never;
 
 export namespace Spyable {
   export namespace ForValue {
@@ -208,14 +209,14 @@ export namespace Spyable {
     };
 
     /**
-     * What `mock()` returns for an identity an extension can produce from —
-     * the ordinary value interface plus `produce()`. Kept as a distinct type,
-     * and selected by {@link Spyable}, so `produce()` is offered *only*
-     * where production is actually possible: on a plain `T<>` or a Standard
-     * Schema it does not appear at all.
+     * What `mock()` returns for an identity an extension can produce from — the
+     * ordinary value interface plus `produce()`. Kept as a distinct type, and
+     * selected by {@link Spyable}, so `produce()` is offered _only_ where
+     * production is actually possible: on a plain `T<>` or a Standard Schema it
+     * does not appear at all.
      *
      * `Omit<…, "named">` rather than a bare intersection: intersecting two
-     * object types that both carry `named` produces an *overloaded* `named`,
+     * object types that both carry `named` produces an _overloaded_ `named`,
      * and a call would resolve to the first signature — the one returning the
      * non-producible `Named`, silently dropping `produce` from under
      * `named(...)`. Replacing the property outright is what keeps it present.
@@ -248,16 +249,16 @@ export namespace Spyable {
     ) => Spy.ForValue<$Out, Spy.Strategy.ForValue.Passthrough>;
 
     /**
-     * `produce()` lets the extension decide the value outright;
-     * `produce(({ via }) => …)` shapes it, where `via` is the extension's own
-     * object for this identity — so overrides are expressed through whatever
-     * API that library already has, and extern re-derives none of it.
+     * `produce()` lets the extension decide the value outright; `produce(({ via
+     * }) => …)` shapes it, where `via` is the extension's own object for this
+     * identity — so overrides are expressed through whatever API that library
+     * already has, and extern re-derives none of it.
      *
      * Both forms **cache**, keyed by identity and name, so the callback runs
      * once per block. That is not a neutral default: an extension typically
-     * derives distinctness from per-construction state, so an uncached
-     * callback would hand back a different value on every read of one block,
-     * which is never what the line means.
+     * derives distinctness from per-construction state, so an uncached callback
+     * would hand back a different value on every read of one block, which is
+     * never what the line means.
      *
      * The callback form is withdrawn when `$Handle` is `never` — an extension
      * that declares no `Handle` has nothing to pass, though it can still
@@ -265,9 +266,8 @@ export namespace Spyable {
      * `produce()` and `produce({ unused: "allow" })` both fall through to the
      * second, since neither argument is a function.
      */
-    export type Produce<$Out, $Handle> =
-      [$Handle] extends [never] ?
-        (options?: Options) => Spy.ForValue<$Out, Spy.Strategy.ForValue.Produce>
+    export type Produce<$Out, $Handle> = [$Handle] extends [never]
+      ? (options?: Options) => Spy.ForValue<$Out, Spy.Strategy.ForValue.Produce>
       : {
           (
             via: (context: { readonly via: $Handle }) => $Out,

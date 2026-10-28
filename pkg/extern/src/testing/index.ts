@@ -12,10 +12,10 @@ export type Testing<$Lambda extends TypeLambda = never> = <$Return>(
 ) => $Return;
 
 /**
- * Deliberately no `try`/`catch` around the body. A synchronous throw reports
- * at the user's own line on bun — the same property harness works to preserve.
- * The unused-mock check is skipped when the body throws (the throw happens
- * first), which matches the previous `await` path.
+ * Deliberately no `try`/`catch` around the body. A synchronous throw reports at
+ * the user's own line on bun — the same property harness works to preserve. The
+ * unused-mock check is skipped when the body throws (the throw happens first),
+ * which matches the previous `await` path.
  */
 export const testing =
   (config: Config): Testing<TypeLambda> =>
@@ -26,23 +26,22 @@ export const testing =
     const run = () => config.scope.run(context, () => fn(mock));
 
     /**
-     * Skipped entirely when no extension was configured, so a suite that
-     * never wires one up never enters an extension's scope — and can never be
-     * subject to whatever constraints that scope imposes on the block it
-     * wraps.
+     * Skipped entirely when no extension was configured, so a suite that never
+     * wires one up never enters an extension's scope — and can never be subject
+     * to whatever constraints that scope imposes on the block it wraps.
      */
     const result =
-      config.extensions.all.length === 0 ?
-        run()
-      : config.extensions.scope((produce) => {
-          /**
-           * Assigned *before* `scope.run`, so it is already in place by the
-           * time any test code — or a producible block reached from it — can
-           * read it.
-           */
-          context.produce = produce;
-          return run();
-        });
+      config.extensions.all.length === 0
+        ? run()
+        : config.extensions.scope((produce) => {
+            /**
+             * Assigned _before_ `scope.run`, so it is already in place by the
+             * time any test code — or a producible block reached from it — can
+             * read it.
+             */
+            context.produce = produce;
+            return run();
+          });
 
     if (isThenable(result)) {
       return result.then((value) => {

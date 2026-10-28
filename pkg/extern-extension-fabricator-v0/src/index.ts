@@ -10,14 +10,14 @@ export type { Built, FabricatorLambda, HandleFor, Schema } from "./Types";
  *
  * Read off that declaration rather than written out here. Fabricator does not
  * export its `Instance` type by name, and a hand-written structural stand-in
- * would be a second copy of a contract this package has no business owning:
- * it would drift, and it would silently keep compiling once it had.
+ * would be a second copy of a contract this package has no business owning: it
+ * would drift, and it would silently keep compiling once it had.
  */
 export type Instance = ReturnType<typeof initialize>;
 
 /**
- * True for a raw fabricator Schema or a built Fabricator — anything a block
- * can construct a value from. Every kind's Schema and every built Fabricator
+ * True for a raw fabricator Schema or a built Fabricator — anything a block can
+ * construct a value from. Every kind's Schema and every built Fabricator
  * carries both brands, unlike anything else that extern's `Identity` covers.
  */
 const supports = (identity: unknown): boolean =>
@@ -80,19 +80,19 @@ export const fabricatorExtension = (
   *frame() {
     /**
      * `wrap`, not `fork`: it opens an ambient frame as well as handing back a
-     * scoped instance, so a user's own `new fabricator.Fabricator(...)`
-     * written directly in the test resolves against the very same source as the
-     * blocks around it.
+     * scoped instance, so a user's own `new fabricator.Fabricator(...)` written
+     * directly in the test resolves against the very same source as the blocks
+     * around it.
      *
      * {@link SCOPE_SALT} is what keeps a block's draws distinct from those of
      * the scope enclosing it. Every `wrap` re-instantiates, so a block's
      * ordinals restart at zero — and with the enclosing salt inherited
-     * unchanged, the two sources would be identically seeded. The *n*th
-     * fabrication of a schema inside the block would then equal the *n*th
+     * unchanged, the two sources would be identically seeded. The _n_th
+     * fabrication of a schema inside the block would then equal the _n_th
      * outside it, at every ordinal rather than merely the first.
      *
-     * Everything else the enclosing configuration carries inherits untouched,
-     * a harness's per-test salt above all.
+     * Everything else the enclosing configuration carries inherits untouched, a
+     * harness's per-test salt above all.
      *
      * `context.scope()`, not `config.instance`, is what makes that inheritance
      * happen. A plain `wrap` lays its overlay over the instance it was called
@@ -122,7 +122,7 @@ const session = (instance: Instance): Session.Producer => ({
     const built = new instance.Fabricator(identity as Buildable, {
       /**
        * `ordinal: null` alongside the salt, not the salt alone. Fabricator
-       * documents a salt as a *pin* rather than a fork — "a salted build takes
+       * documents a salt as a _pin_ rather than a fork — "a salted build takes
        * the next ordinal exactly as an unsalted one does" — so layering the
        * name on its own leaves the source's construction counter in the trace,
        * and a named block's value still shifts with whatever was built before
@@ -137,7 +137,7 @@ const session = (instance: Instance): Session.Producer => ({
     });
 
     /**
-     * The handle *is* the built Fabricator. Only this package can construct
+     * The handle _is_ the built Fabricator. Only this package can construct
      * one, which is why extern routes the caller's callback here rather than
      * invoking it itself — and why shaping a fabrication is expressed in
      * fabricator's own `fabricate(overrides)` vocabulary rather than anything

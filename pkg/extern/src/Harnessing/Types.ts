@@ -108,8 +108,8 @@ export type Integration<$Context extends object, $Established = void> = {
  * What the wrapper establishes, and what the `extern` context key holds.
  *
  * An object around the mocker rather than the mocker itself, so the key can
- * grow a sibling later without claiming a second top-level context key — and
- * so `context.extern` reads as the library it names rather than as a callable
+ * grow a sibling later without claiming a second top-level context key — and so
+ * `context.extern` reads as the library it names rather than as a callable
  * whose name says nothing about what calling it does.
  */
 export type Mocking<$Lambda extends TypeLambda = never> = {

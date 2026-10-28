@@ -16,7 +16,7 @@ import { describe, expect, it } from "bun:test";
 import { fabricatorExtension, type FabricatorLambda } from "../src";
 
 /**
- * What happens when this extension's `wrap` runs *inside* the `wrap` that
+ * What happens when this extension's `wrap` runs _inside_ the `wrap` that
  * `@ghostry/fabricator/harnessing` opens per test — the arrangement a user gets
  * from combining extern, fabricator, and `@ghostry/harness`.
  *
@@ -153,10 +153,10 @@ describe("under a harness frame", () => {
   /**
    * Every `wrap` re-instantiates, so a block's ordinals restart at zero. Were
    * the enclosing salt inherited untouched, the block's source and the
-   * enclosing one would be identically seeded — and the *n*th fabrication of a
-   * schema inside the block would equal the *n*th outside it, at every ordinal
-   * rather than merely the first. The scope's own salt layer is what rules
-   * that out, so this asserts the whole run is disjoint and not just its head.
+   * enclosing one would be identically seeded — and the _n_th fabrication of a
+   * schema inside the block would equal the _n_th outside it, at every ordinal
+   * rather than merely the first. The scope's own salt layer is what rules that
+   * out, so this asserts the whole run is disjoint and not just its head.
    */
   it("never collides with the enclosing scope's own draws", async () => {
     const draws = (count: number): ReadonlyArray<Id> =>
@@ -176,14 +176,14 @@ describe("under a harness frame", () => {
   });
 
   /**
-   * `provides.fabricator` hands back the *harness's* scope, not the one this
+   * `provides.fabricator` hands back the _harness's_ scope, not the one this
    * extension opened inside it. That handle does not go stale: fabricator
    * resolves a construction against the innermost active frame, so the provided
    * instance and the ambient one draw from a single source inside the block.
    *
    * Were they not sharing — were the provided scope still building from its own
    * source — each of these would be that source's ordinal zero, and they would
-   * be equal. Their *inequality* is what pins the sharing down.
+   * be equal. Their _inequality_ is what pins the sharing down.
    */
   it("keeps the provided scope in step with the block's own source", async () => {
     await asTest("provided", async (context) => {
@@ -211,8 +211,8 @@ describe("under a harness frame", () => {
 
 describe("handing the two halves different instances", () => {
   /**
-   * An extern instance whose fabricator extension is pointed at `instance`,
-   * and a block built through it.
+   * An extern instance whose fabricator extension is pointed at `instance`, and
+   * a block built through it.
    */
   const extendedWith = async (instance: typeof fabricator) => {
     const extended = await initializeExtern({
@@ -327,7 +327,10 @@ describe("handing the two halves different instances", () => {
 describe("composed with extern's own harness integration", () => {
   const CLOCK = new Date("2024-01-01T00:00:00.000Z");
 
-  /** What the two integrations contribute between them, merged as harness merges it. */
+  /**
+   * What the two integrations contribute between them, merged as harness merges
+   * it.
+   */
   type Composed = Readonly<
     FabricatorTestContext & ExternTestContext<FabricatorLambda>
   >;
@@ -351,9 +354,9 @@ describe("composed with extern's own harness integration", () => {
       });
 
     const integrations =
-      order === "extern-last" ?
-        [integration(instance), externIntegration(composed)]
-      : [externIntegration(composed), integration(instance)];
+      order === "extern-last"
+        ? [integration(instance), externIntegration(composed)]
+        : [externIntegration(composed), integration(instance)];
 
     const harnessed = initializeHarness({ framework, integrations });
 
@@ -476,10 +479,10 @@ describe("composed with extern's own harness integration", () => {
  *
  * The per-test `wrap` governs the instance handed to `integration(...)` and its
  * ancestors, never a fork of it. So a bare `instance.fork()` taken inside the
- * body draws its own configuration — the same data in every test — while a
- * fork of `instance.context.scope()`, the scope in effect, carries every layer
- * and is per test. Blocks stay per test either way, which is what makes the
- * bare fork easy to miss.
+ * body draws its own configuration — the same data in every test — while a fork
+ * of `instance.context.scope()`, the scope in effect, carries every layer and
+ * is per test. Blocks stay per test either way, which is what makes the bare
+ * fork easy to miss.
  */
 describe("a fork taken inside a test", () => {
   const CLOCK = new Date("2024-01-01T00:00:00.000Z");
@@ -497,9 +500,9 @@ describe("a fork taken inside a test", () => {
     const harnessed = initializeHarness({
       framework,
       integrations:
-        order === "extern-last" ?
-          [integration(instance), externIntegration(composed)]
-        : [externIntegration(composed), integration(instance)],
+        order === "extern-last"
+          ? [integration(instance), externIntegration(composed)]
+          : [externIntegration(composed), integration(instance)],
     });
 
     const draw = (from: typeof instance): Drawn => ({

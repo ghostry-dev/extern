@@ -15,8 +15,8 @@ export const will = async <$Out, $In>(
   const context = config.scope.current();
 
   /**
-   * If not in an explicit testing block, run the original function and
-   * validate the result.
+   * If not in an explicit testing block, run the original function and validate
+   * the result.
    */
   if (!context) {
     const result = await schema["~standard"].validate(await fn());
@@ -29,8 +29,8 @@ export const will = async <$Out, $In>(
   /**
    * No implicit-production branch here, unlike `typed`: a `validated` block's
    * identity is a Standard Schema, which no extension lambda can widen this
-   * signature to accept. A `produce()` mock is still reachable through a
-   * plain JavaScript caller, so the strategy is still dispatched below.
+   * signature to accept. A `produce()` mock is still reachable through a plain
+   * JavaScript caller, so the strategy is still dispatched below.
    */
   if (!spy) throw new NotMockedError();
 

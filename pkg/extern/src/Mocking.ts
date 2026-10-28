@@ -61,12 +61,12 @@ export const mocking = () => {
   /**
    * Always builds the richer, producible-shaped interface — `produce()` is
    * present on every returned object at runtime, in its widest form. Which of
-   * the two is actually *offered* to a caller is a purely type-level decision
+   * the two is actually _offered_ to a caller is a purely type-level decision
    * made by {@link Spyable}: there is no runtime check that could tell an
    * extension's schema from a Standard Schema here without duplicating the
    * extension's own `supports`, and no need to, since calling `produce()` on a
-   * non-producible identity is already unreachable through the public types
-   * and lands on `ExtensionUnavailableError` for an untyped JavaScript caller
+   * non-producible identity is already unreachable through the public types and
+   * lands on `ExtensionUnavailableError` for an untyped JavaScript caller
    * anyway. The same goes for the callback form against a handle-less
    * extension: the extension simply ignores it.
    */
@@ -96,11 +96,10 @@ export const mocking = () => {
       };
 
       /**
-       * This logic keeps the list of spies ordered from most-to-least
-       * specific.
+       * This logic keeps the list of spies ordered from most-to-least specific.
        *
-       * Doing this work upfront makes finding the "best" mock during a
-       * testing block simple and performant.
+       * Doing this work upfront makes finding the "best" mock during a testing
+       * block simple and performant.
        */
       let insertionPoint = 0;
       for (; insertionPoint < existing.length; insertionPoint++) {
@@ -134,9 +133,8 @@ export const mocking = () => {
         const [fn, options] =
           typeof first === "function" ? [first, second] : [undefined, first];
 
-        const strategy =
-          fn ?
-            ({
+        const strategy = fn
+          ? ({
               kind: "produce",
               using: (handle: unknown) => fn({ via: handle as never }),
             } as const)
@@ -208,12 +206,11 @@ export const mocking = () => {
 
   /**
    * Cast, unavoidably: `forValue` has one concrete return type, while
-   * `Mocker`'s is the conditional {@link Spyable}, and TypeScript cannot
-   * relate a concrete type to a conditional one whose checked type is still
-   * generic.
+   * `Mocker`'s is the conditional {@link Spyable}, and TypeScript cannot relate
+   * a concrete type to a conditional one whose checked type is still generic.
    *
-   * Sound because `forValue` always builds the *widest* shape: every branch
-   * of `Spyable` is a subset of the producible interface it returns.
+   * Sound because `forValue` always builds the _widest_ shape: every branch of
+   * `Spyable` is a subset of the producible interface it returns.
    */
   const mock = augmentFunction(forValue, {
     effect: forEffect(),

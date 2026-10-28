@@ -14,8 +14,8 @@ export const will = <$Out extends Promisable<void>, $In>(
   if (!context) return fn();
 
   /**
-   * If the source code block does not name this, then don't make it
-   * available to spy on in tests.
+   * If the source code block does not name this, then don't make it available
+   * to spy on in tests.
    */
   if (typeof params.named !== "string") return Promise.resolve() as $Out;
 

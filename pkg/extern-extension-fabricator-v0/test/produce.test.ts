@@ -71,10 +71,9 @@ describe("`produce(({ via }) => ...)`", () => {
   });
 
   /**
-   * The override type is fabricator's own `Override<$Definition>`, keyed on
-   * the schema *definition* — so it recurses into nested objects, and extern
-   * models none of it. A partial nested override leaves its siblings
-   * fabricated.
+   * The override type is fabricator's own `Override<$Definition>`, keyed on the
+   * schema _definition_ — so it recurses into nested objects, and extern models
+   * none of it. A partial nested override leaves its siblings fabricated.
    */
   it("accepts a nested override, leaving siblings fabricated", async () => {
     await extern.testing((mock) => {
@@ -90,8 +89,8 @@ describe("`produce(({ via }) => ...)`", () => {
   });
 
   /**
-   * The handle is the built Fabricator, so everything it carries is reachable
-   * — not just `fabricate`.
+   * The handle is the built Fabricator, so everything it carries is reachable —
+   * not just `fabricate`.
    */
   it("exposes the built Fabricator itself, `trace` included", async () => {
     await extern.testing((mock) => {

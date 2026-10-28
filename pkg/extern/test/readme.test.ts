@@ -11,10 +11,10 @@ import { integration } from "../src/harnessing";
  * The README's `## Extensions` snippets, executed as written.
  *
  * Its examples are phrased against a hypothetical `my-library`, so the pieces
- * that stand in for it — `MySchema`, `isMySchema`, `buildFrom`,
- * `MyBuilderFor` — are given real implementations here. Everything the README
- * actually shows is then reproduced verbatim, so a snippet that stops being
- * true stops compiling or stops passing.
+ * that stand in for it — `MySchema`, `isMySchema`, `buildFrom`, `MyBuilderFor`
+ * — are given real implementations here. Everything the README actually shows
+ * is then reproduced verbatim, so a snippet that stops being true stops
+ * compiling or stops passing.
  */
 
 const brand: unique symbol = Symbol("my-library");
@@ -149,7 +149,7 @@ describe("the README's `## Extensions` snippets", () => {
   });
 
   /**
-   * This observer records on *entry* only — everything before its `yield`. The
+   * This observer records on _entry_ only — everything before its `yield`. The
    * point of the test is that entry happens exactly once per block and at the
    * same moment whether the body is sync or async, which is what lets the
    * README teach setup and teardown as two halves of one function.
@@ -170,11 +170,17 @@ describe("the README's `## Extensions` snippets", () => {
     const extern = await initialize({ extensions: [profiler()] });
     const before = reports.length;
 
-    /** Synchronous body: no promise, and the report lands before the call returns. */
+    /**
+     * Synchronous body: no promise, and the report lands before the call
+     * returns.
+     */
     extern.testing(() => {});
     expect(reports.length).toBe(before + 1);
 
-    /** Asynchronous body: the report waits for the body, not for the first `await`. */
+    /**
+     * Asynchronous body: the report waits for the body, not for the first
+     * `await`.
+     */
     await extern.testing(async () => {
       await Promise.resolve();
     });

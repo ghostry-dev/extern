@@ -21,8 +21,8 @@ type User = { id: number; name: string };
 
 /**
  * Throws rather than returning: the original function must never run when a
- * block fabricates, and a test that silently fell through to it would
- * otherwise pass on the wrong value.
+ * block fabricates, and a test that silently fell through to it would otherwise
+ * pass on the wrong value.
  */
 const block = (extern: Initialized<FabricatorLambda>): User =>
   extern.typed.by(schema).will((): User => {

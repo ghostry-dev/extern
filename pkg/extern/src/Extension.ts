@@ -4,25 +4,25 @@ import { enterFrame, type Frame, type Opened } from "./Frame";
 import { isThenable } from "./Util";
 
 /**
- * A type-level function from `In` to `Out` — the carrier that lets an
- * extension widen `Identity` for the instances that opt into it, rather than
- * globally for every `initialize()` in a project.
+ * A type-level function from `In` to `Out` — the carrier that lets an extension
+ * widen `Identity` for the instances that opt into it, rather than globally for
+ * every `initialize()` in a project.
  *
  * Encoded with the `this`-type trick: {@link Apply} intersects a concrete `In`
  * onto the lambda and reads `Out` back, and `this["In"]` inside a lambda's
  * `Out` resolves against that intersection.
  *
- * Two authoring rules, both established by compiling against real schema
- * types rather than reasoned about:
+ * Two authoring rules, both established by compiling against real schema types
+ * rather than reasoned about:
  *
- * 1. `this["In"]` cannot appear inside a *nested anonymous object type*. It
- *    has to pass through a named generic alias — `Schema<this["In"]>`
- *    resolves, `{ produces?: this["In"] }` does not.
- * 2. `Out` must be structurally *narrow*, keyed on a nominal marker the
- *    extension's own values carry. A shape as loose as
- *    `{ build: () => this["In"] }` accepts any object with a same-named
- *    method, silently making unrelated values look like identities — the
- *    reason a real lambda intersects its library's branded symbols.
+ * 1. `this["In"]` cannot appear inside a _nested anonymous object type_. It has to
+ *    pass through a named generic alias — `Schema<this["In"]>` resolves, `{
+ *    produces?: this["In"] }` does not.
+ * 2. `Out` must be structurally _narrow_, keyed on a nominal marker the
+ *    extension's own values carry. A shape as loose as `{ build: () =>
+ *    this["In"] }` accepts any object with a same-named method, silently making
+ *    unrelated values look like identities — the reason a real lambda
+ *    intersects its library's branded symbols.
  */
 export interface TypeLambda {
   readonly In: unknown;
@@ -32,11 +32,11 @@ export interface TypeLambda {
 /**
  * Apply a type lambda to a concrete type.
  *
- * Distributes over a *union* of lambdas for free — both `&` and indexed
- * access distribute over unions — which is how several extensions compose
- * with no combinator involved. A combinator is in fact not expressible: with
- * a generic `$Lambda`, `($Lambda & { In: this["In"] })["Out"]` stays a
- * deferred indexed access and `this` never resolves.
+ * Distributes over a _union_ of lambdas for free — both `&` and indexed access
+ * distribute over unions — which is how several extensions compose with no
+ * combinator involved. A combinator is in fact not expressible: with a generic
+ * `$Lambda`, `($Lambda & { In: this["In"] })["Out"]` stays a deferred indexed
+ * access and `this` never resolves.
  *
  * `Apply<never, $T>` is `never`, so an instance with no extensions needs no
  * sentinel lambda — the empty case falls out of the encoding.
@@ -46,21 +46,20 @@ export type Apply<$Lambda extends TypeLambda, $T> = ($Lambda & {
 })["Out"];
 
 /**
- * The second type-level function an extension may carry: from a *concrete
- * identity* to the object its own API exposes for that identity — a builder, a
- * generator, whatever that library already offers. That object is
- * what `mock(x).produce(({ via }) => …)` hands the caller, so shaping a
- * production is expressed in the extension's own vocabulary and extern models
- * none of it.
+ * The second type-level function an extension may carry: from a _concrete
+ * identity_ to the object its own API exposes for that identity — a builder, a
+ * generator, whatever that library already offers. That object is what
+ * `mock(x).produce(({ via }) => …)` hands the caller, so shaping a production
+ * is expressed in the extension's own vocabulary and extern models none of it.
  *
  * Deliberately **separate** from {@link TypeLambda} rather than two more slots
- * on it, and this is not a stylistic choice. An interface property is
- * inherited whether or not the extending interface redeclares it, so a
- * `Handle: unknown` on the base would land on *every* lambda — including the
- * handle-less ones this contract exists to support. `Handle | unknown` is
- * `unknown`, so a single observer extension configured beside a
- * handle-bearing one would collapse `via` to `unknown` for every identity in
- * the instance. Opting in by declaration is what keeps that unrepresentable.
+ * on it, and this is not a stylistic choice. An interface property is inherited
+ * whether or not the extending interface redeclares it, so a `Handle: unknown`
+ * on the base would land on _every_ lambda — including the handle-less ones
+ * this contract exists to support. `Handle | unknown` is `unknown`, so a single
+ * observer extension configured beside a handle-bearing one would collapse
+ * `via` to `unknown` for every identity in the instance. Opting in by
+ * declaration is what keeps that unrepresentable.
  */
 export interface HandleLambda {
   readonly Of: unknown;
@@ -68,23 +67,25 @@ export interface HandleLambda {
 }
 
 /**
- * Resolve what a callback receives for `$Identity`, or `never` when this
- * lambda offers nothing to hand it.
+ * Resolve what a callback receives for `$Identity`, or `never` when this lambda
+ * offers nothing to hand it.
  *
  * The `$Lambda extends HandleLambda` guard is what makes the empty case `never`
  * rather than `unknown`, and it distributes over a union of lambdas, so each
  * member is judged on its own — a handle-less extension contributes nothing
  * instead of swallowing its neighbours' handles.
  */
-export type HandleOf<$Lambda extends TypeLambda, $Identity> =
-  $Lambda extends HandleLambda ?
-    ($Lambda & { readonly Of: $Identity })["Handle"]
+export type HandleOf<
+  $Lambda extends TypeLambda,
+  $Identity,
+> = $Lambda extends HandleLambda
+  ? ($Lambda & { readonly Of: $Identity })["Handle"]
   : never;
 
 /**
  * Produce a value for `identity`. `named` is the block's disambiguating name
- * when it has one, which an extension may fold into how it derives the value
- * so that two differently-named blocks over one identity differ.
+ * when it has one, which an extension may fold into how it derives the value so
+ * that two differently-named blocks over one identity differ.
  *
  * `using` is present when the caller wrote `produce(fn)` rather than
  * `produce()`. Only the extension can construct a handle, so it — not extern —
@@ -105,7 +106,7 @@ export type Produce = (
 /**
  * What an extension hands back for the duration of one open scope.
  *
- * `produce` is optional *here* because this is the erased form extern's core
+ * `produce` is optional _here_ because this is the erased form extern's core
  * holds — a session it has not yet attributed to a variant. Which variant an
  * extension is decides what it must yield: see {@link Session.Producer}.
  */
@@ -121,7 +122,7 @@ export namespace Session {
    * different type is what keeps "claims, but serves nothing" from compiling.
    *
    * Spelled as an intersection rather than `Required<Session>`, which would
-   * quietly make every *optional* member mandatory for producers, and would do
+   * quietly make every _optional_ member mandatory for producers, and would do
    * so again for whatever is added to `Session` next.
    */
   export type Producer = Session & { readonly produce: Produce };
@@ -139,16 +140,19 @@ export namespace Session {
  * `Extension` is precisely {@link Extension.Observer}. Neither admits the
  * other.
  *
- * Passed to `initialize()` as a value, so any widening applies to that
- * instance alone.
+ * Passed to `initialize()` as a value, so any widening applies to that instance
+ * alone.
  */
-export type Extension<$Lambda extends TypeLambda = never> =
-  [$Lambda] extends [never] ? Extension.Observer : Extension.Producer<$Lambda>;
+export type Extension<$Lambda extends TypeLambda = never> = [$Lambda] extends [
+  never,
+]
+  ? Extension.Observer
+  : Extension.Producer<$Lambda>;
 
 export namespace Extension {
   /**
-   * The shared half: every extension is named, and every extension gets a
-   * scope opened per `extern.testing` block.
+   * The shared half: every extension is named, and every extension gets a scope
+   * opened per `extern.testing` block.
    */
   interface Base {
     /** Names this extension in diagnostics, e.g. `"schema-library"`. */
@@ -156,19 +160,19 @@ export namespace Extension {
   }
 
   /**
-   * An extension that contributes identities: its own schemas become usable
-   * as block identities, and a block built from one produces a value instead
-   * of throwing when it has no mock.
+   * An extension that contributes identities: its own schemas become usable as
+   * block identities, and a block built from one produces a value instead of
+   * throwing when it has no mock.
    */
   export interface Producer<
     $Lambda extends TypeLambda = TypeLambda,
   > extends Base {
-    readonly "kind": "producer";
+    readonly kind: "producer";
 
     /**
-     * Phantom, never read at runtime — the sole carrier of `$Lambda`, which
-     * is what lets `initialize` infer it from the value a caller passes
-     * rather than requiring an explicit type argument.
+     * Phantom, never read at runtime — the sole carrier of `$Lambda`, which is
+     * what lets `initialize` infer it from the value a caller passes rather
+     * than requiring an explicit type argument.
      */
     readonly "~lambda"?: $Lambda;
 
@@ -179,7 +183,7 @@ export namespace Extension {
      * one the lambda accepts, and vice versa. Where they disagree, the type
      * level and the runtime disagree about which blocks are producible.
      */
-    readonly "supports": (identity: unknown) => boolean;
+    readonly supports: (identity: unknown) => boolean;
 
     /**
      * What a block that this extension claims does when it has no matching
@@ -190,7 +194,7 @@ export namespace Extension {
      *
      * @default "produce"
      */
-    readonly "unmocked"?: "produce" | "error";
+    readonly unmocked?: "produce" | "error";
 
     /**
      * Open one scope per `extern.testing` block, as a generator with **one**
@@ -198,7 +202,7 @@ export namespace Extension {
      *
      * Everything before the `yield` is setup. The `yield` is where the block
      * runs, and carries the session this extension serves — either directly, or
-     * as a wrapper `(body) => …` for when the block must run *inside* something
+     * as a wrapper `(body) => …` for when the block must run _inside_ something
      * the extension opens, which then passes the session forward to `body`.
      * Everything after the `yield` is teardown.
      *
@@ -233,8 +237,8 @@ export namespace Extension {
   }
 
   /**
-   * Any extension, whichever variant — the form extern's core stores
-   * and iterates.
+   * Any extension, whichever variant — the form extern's core stores and
+   * iterates.
    */
   export type Any = Producer | Observer;
 }
@@ -243,7 +247,7 @@ export namespace Extension {
  * Reads the lambda back off an extension value.
  *
  * Matches {@link Extension.Producer} rather than `Extension<infer $Lambda>`:
- * `Extension` is a *conditional* alias, and a conditional's own parameter is
+ * `Extension` is a _conditional_ alias, and a conditional's own parameter is
  * not inferrable through. An observing extension matches nothing here and
  * yields `never`, which is exactly its contribution to the union.
  *
@@ -263,16 +267,16 @@ export interface Extensions {
   readonly all: readonly Extension.Any[];
 
   /**
-   * The one extension that recognizes `identity`, or `undefined` when none
-   * does — including when no configured extension produces anything at all.
+   * The one extension that recognizes `identity`, or `undefined` when none does
+   * — including when no configured extension produces anything at all.
    *
    * Counts matches rather than taking the first. Two extensions whose lambdas
    * both match an identity resolve `$Out` to a winner TypeScript picks by its
    * own inference-candidate selection — independent of the order they appear
-   * in, verified both ways — so a first-match-wins dispatch here cannot be
-   * made to agree with the type the caller was handed. Ordering does not fix
-   * it; refusing does, by turning a silent divergence into a loud error at
-   * the point of use.
+   * in, verified both ways — so a first-match-wins dispatch here cannot be made
+   * to agree with the type the caller was handed. Ordering does not fix it;
+   * refusing does, by turning a silent divergence into a loud error at the
+   * point of use.
    */
   readonly claimant: (identity: unknown) => Extension.Producer | undefined;
 
@@ -287,8 +291,8 @@ export interface Extensions {
 
 export const compose = (extensions: readonly Extension.Any[]): Extensions => {
   /**
-   * Keyed on the discriminant, so every caller downstream then knows a
-   * claimant serves what it claims, with no additional check.
+   * Keyed on the discriminant, so every caller downstream then knows a claimant
+   * serves what it claims, with no additional check.
    */
   const claimant = (identity: unknown): Extension.Producer | undefined => {
     const claimants = extensions.filter(
@@ -306,7 +310,7 @@ export const compose = (extensions: readonly Extension.Any[]): Extensions => {
   /**
    * Each extension's frame encloses the next, so every one is open by the time
    * `block` runs. Recursive rather than a fold: each level has to return the
-   * level below *inside* its own wrapper, which a reduce over thunks expresses
+   * level below _inside_ its own wrapper, which a reduce over thunks expresses
    * far less directly.
    *
    * That nesting is also what sequences teardown, with no ordering logic here:
@@ -340,17 +344,17 @@ export const compose = (extensions: readonly Extension.Any[]): Extensions => {
           const claim = claimant(identity);
 
           const match =
-            claim === undefined ? undefined : (
-              opened.find((o) => o.extension === claim)
-            );
+            claim === undefined
+              ? undefined
+              : opened.find((o) => o.extension === claim);
 
           /**
            * Also thrown when the claiming extension's session yielded no
-           * `produce`. {@link Extension.Producer} now makes that
-           * unrepresentable — its `frame` must yield a
-           * {@link Session.Producer} — so this is reachable only by defeating
-           * the types: a plain JavaScript caller, or a cast. It stays a real
-           * error rather than an assertion for exactly that reason.
+           * `produce`. {@link Extension.Producer} now makes that unrepresentable
+           * — its `frame` must yield a {@link Session.Producer} — so this is
+           * reachable only by defeating the types: a plain JavaScript caller,
+           * or a cast. It stays a real error rather than an assertion for
+           * exactly that reason.
            */
           if (match?.session.produce === undefined) {
             throw new ExtensionUnavailableError();
@@ -396,8 +400,8 @@ export const compose = (extensions: readonly Extension.Any[]): Extensions => {
        * `next()` settles, so an async frame promotes the block — exactly as an
        * awaited setup always did.
        */
-      return isThenable(frame) ?
-          (frame.then(proceed) as $Return)
+      return isThenable(frame)
+        ? (frame.then(proceed) as $Return)
         : proceed(frame);
     };
 

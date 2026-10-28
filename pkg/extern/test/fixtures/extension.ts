@@ -32,8 +32,8 @@ export const boxed = <$T>(label: string): Boxed<$T> => ({
 
 /**
  * The stub's handle: what `produce(({ via }) => …)` hands a caller for a boxed
- * identity. Stands in for whatever object a real extension already exposes —
- * a builder, a generator — and, like a real one, it is the extension that
+ * identity. Stands in for whatever object a real extension already exposes — a
+ * builder, a generator — and, like a real one, it is the extension that
  * constructs it, never extern.
  */
 export interface Box<$T> {
@@ -48,7 +48,7 @@ export interface Box<$T> {
 type BoxFor<$Of> = $Of extends Boxed<infer $T> ? Box<$T> : never;
 
 /**
- * `Boxed<this["In"]>` through a *named* alias: `this["In"]` written directly
+ * `Boxed<this["In"]>` through a _named_ alias: `this["In"]` written directly
  * inside a nested anonymous object type does not resolve.
  *
  * Extends `HandleLambda` as well, which is what makes the callback form of
@@ -85,10 +85,10 @@ export const boxedExtension = (options?: {
 
   *frame() {
     /**
-     * Reset per scope, and folded into every produced value: this stands in
-     * for the per-construction state a real extension derives values from,
-     * and is what makes the core's production cache observable. Without it,
-     * asking twice would trivially agree and the cache would be untestable.
+     * Reset per scope, and folded into every produced value: this stands in for
+     * the per-construction state a real extension derives values from, and is
+     * what makes the core's production cache observable. Without it, asking
+     * twice would trivially agree and the cache would be untestable.
      */
     let ordinal = 0;
 
@@ -106,8 +106,8 @@ export const boxedExtension = (options?: {
 
         /**
          * The extension builds the handle and invokes the callback — extern
-         * cannot, having no idea what shape this extension's handle takes.
-         * The handle closes over the *same* `value` the plain path would have
+         * cannot, having no idea what shape this extension's handle takes. The
+         * handle closes over the _same_ `value` the plain path would have
          * produced, so `produce()` and `produce(({ via }) => via.build())`
          * agree, and a `suffix` shapes that one value rather than drawing a
          * fresh one.
@@ -117,9 +117,9 @@ export const boxedExtension = (options?: {
         const handle: Box<string> = {
           label,
           build: (overrides) =>
-            overrides?.suffix === undefined ?
-              value
-            : `${value}+${overrides.suffix}`,
+            overrides?.suffix === undefined
+              ? value
+              : `${value}+${overrides.suffix}`,
         };
 
         return using(handle);
@@ -131,7 +131,7 @@ export const boxedExtension = (options?: {
 });
 
 /**
- * A second, deliberately *disjoint* extension: a different marker symbol, so
+ * A second, deliberately _disjoint_ extension: a different marker symbol, so
  * neither claims the other's identities.
  */
 const other: unique symbol = Symbol("tagged");
@@ -180,9 +180,9 @@ export const taggedExtension = (options?: {
 });
 
 /**
- * An extension that claims exactly what the boxed one does, for exercising
- * the overlap check. Its lambda is identical to `BoxedLambda`, which is
- * precisely the situation that has no well-defined produced type.
+ * An extension that claims exactly what the boxed one does, for exercising the
+ * overlap check. Its lambda is identical to `BoxedLambda`, which is precisely
+ * the situation that has no well-defined produced type.
  */
 export const greedyExtension = (): Extension<BoxedLambda> => ({
   kind: "producer",
@@ -200,11 +200,11 @@ export const greedyExtension = (): Extension<BoxedLambda> => ({
 /**
  * An extension that produces nothing at all.
  *
- * The shape a debugging or reporting helper takes: it wants a scope per
- * testing block, but claims no identities and serves no values. It declares
- * no `supports`, leaves `$Lambda` at its `never` default, and yields an empty
- * session — so it contributes nothing to `Identity`, and blocks behave
- * exactly as they would with no extension configured.
+ * The shape a debugging or reporting helper takes: it wants a scope per testing
+ * block, but claims no identities and serves no values. It declares no
+ * `supports`, leaves `$Lambda` at its `never` default, and yields an empty
+ * session — so it contributes nothing to `Identity`, and blocks behave exactly
+ * as they would with no extension configured.
  */
 export const observerExtension = (options?: {
   readonly opened?: Opened;
@@ -228,9 +228,9 @@ export const observerExtension = (options?: {
  *
  * The cast is the point of this fixture now. `Extension.Producer` requires a
  * {@link Session.Producer}, so this shape no longer type-checks — reaching
- * `ExtensionUnavailableError` takes a deliberate defeat of the types, which
- * is exactly what that error's own documentation claims. Without the cast,
- * `yield {}` is a compile error rather than a runtime one.
+ * `ExtensionUnavailableError` takes a deliberate defeat of the types, which is
+ * exactly what that error's own documentation claims. Without the cast, `yield
+ * {}` is a compile error rather than a runtime one.
  */
 export const brokenExtension = (): Extension<BoxedLambda> => ({
   kind: "producer",

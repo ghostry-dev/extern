@@ -18,7 +18,7 @@
  * copy tracks, so move it whenever that contract does — `Harnessing/Types.ts`
  * is where the drift actually lives.
  *
- * Note what is *not* re-exported here. `Frame` and `Wrapper` name harness's
+ * Note what is _not_ re-exported here. `Frame` and `Wrapper` name harness's
  * generator contract, and extern's `.` export already uses both names for its
  * own extension frames; `Identity` is harness's test identity, where extern's
  * `Identity` is a block's schema. Reach for them through
