@@ -1,7 +1,7 @@
 # @ghostry/extern-extension-fabricator-v0
 
 [`@ghostry/fabricator`](https://github.com/ghostry-dev/fabricator) integration
-for [`@ghostry/extern`](https://github.com/pjrebsch/extern).
+for [`@ghostry/extern`](https://github.com/ghostry-dev/extern).
 
 A `typed` extern block built from a fabricator schema becomes **self-mocking**:
 with no mock defined it fabricates a value from its own schema instead of

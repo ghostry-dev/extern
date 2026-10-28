@@ -16,11 +16,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pjrebsch/extern",
+    "url": "git+https://github.com/ghostry-dev/extern",
     "directory": "pkg/extern-extension-fabricator-v0"
   },
-  "homepage": "https://github.com/pjrebsch/extern",
-  "bugs": "https://github.com/pjrebsch/extern/issues",
+  "homepage": "https://github.com/ghostry-dev/extern",
+  "bugs": "https://github.com/ghostry-dev/extern/issues",
   "type": "module",
   "types": "./dist/types/index.d.ts",
   "module": "./dist/esm/index.js",
