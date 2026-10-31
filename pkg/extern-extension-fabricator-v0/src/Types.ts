@@ -3,7 +3,6 @@ import type {
   AsFabricator,
   Kind,
   Meta,
-  NaiveFabricator,
   Produced,
   Produces,
 } from "@ghostry/fabricator/internal";
@@ -24,17 +23,19 @@ import type {
  * optional slot: an identity of `T.undefinable(row)` infers `Row`, and a block
  * returning `undefined` is rejected. Inside the box it is out of the modifier's
  * reach, so the inference is the same under either setting.
+ *
+ * Never a built Fabricator. Given one, a block could either continue that
+ * Fabricator's streams or build afresh from its schema in the testing block's
+ * scope, and nothing at the call site says which. `fabricate?: never` is what
+ * keeps one out: a Fabricator carries `[Kind]` and `[Meta]` too, and lacking
+ * the optional `[Produces]` does not stop it matching — the trap fabricator's
+ * own `fabricate` type closes the same way.
  */
 export type Schema<$T> = {
   readonly [Kind]: unknown;
   readonly [Meta]: unknown;
   readonly [Produces]?: Produced<$T>;
-};
-
-/** A built Fabricator producing `$T` — equally usable as a block identity. */
-export type Built<$T> = NaiveFabricator<$T> & {
-  readonly [Kind]: unknown;
-  readonly [Meta]: unknown;
+  readonly fabricate?: never;
 };
 
 /**
@@ -59,6 +60,6 @@ export type HandleFor<$Of> = AsFabricator<$Of>;
  * see extern's own note there.
  */
 export interface FabricatorLambda extends TypeLambda, HandleLambda {
-  readonly Out: Schema<this["In"]> | Built<this["In"]>;
+  readonly Out: Schema<this["In"]>;
   readonly Handle: HandleFor<this["Of"]>;
 }

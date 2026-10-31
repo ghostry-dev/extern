@@ -1,9 +1,9 @@
 import type { Extension, Session } from "@ghostry/extern";
 import { initialize, layer } from "@ghostry/fabricator";
-import { Kind, Meta, type Buildable } from "@ghostry/fabricator/internal";
+import { isSchema, type Buildable } from "@ghostry/fabricator/internal";
 import type { FabricatorLambda } from "./Types";
 
-export type { Built, FabricatorLambda, HandleFor, Schema } from "./Types";
+export type { FabricatorLambda, HandleFor, Schema } from "./Types";
 
 /**
  * A `@ghostry/fabricator` instance from its own `initialize()` call.
@@ -14,17 +14,6 @@ export type { Built, FabricatorLambda, HandleFor, Schema } from "./Types";
  * would drift, and it would silently keep compiling once it had.
  */
 export type Instance = ReturnType<typeof initialize>;
-
-/**
- * True for a raw fabricator Schema or a built Fabricator — anything a block can
- * construct a value from. Every kind's Schema and every built Fabricator
- * carries both brands, unlike anything else that extern's `Identity` covers.
- */
-const supports = (identity: unknown): boolean =>
-  typeof identity === "object"
-  && identity !== null
-  && Kind in identity
-  && Meta in identity;
 
 /**
  * A deliberately foreknown constant, layered onto the salt by every testing
@@ -73,7 +62,13 @@ export const fabricatorExtension = (
 
   name: "fabricator",
 
-  supports,
+  /**
+   * A raw fabricator Schema, never a built Fabricator — see `Schema` in
+   * `Types.ts` for why. `isSchema` is fabricator's own test: a `[Kind]` tag, a
+   * `[Meta]`, and no `fabricate`, so `T.string`/`T.bigint`, which cannot be
+   * built until `.whereby(...)`, are not claimed either.
+   */
+  supports: isSchema,
 
   ...(config.unmocked === undefined ? {} : { unmocked: config.unmocked }),
 

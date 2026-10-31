@@ -89,15 +89,21 @@ describe("implicit fabrication", async () => {
     });
   });
 
-  it("accepts a built Fabricator as an identity, exactly like a raw schema", async () => {
+  /**
+   * A built Fabricator is not an identity: a block could either continue its
+   * streams or rebuild from its schema, and nothing at the call site says
+   * which. Unclaimed, it is left to extern, which has no mock for it.
+   */
+  it("leaves a built Fabricator unclaimed, throwing `NotMockedError`", async () => {
     const built = new fabricator.Fabricator(schema);
 
     await extern.testing(() => {
-      const value = extern.typed.by(built).will((): User => {
-        throw new Error("unreachable");
-      });
-
-      expect(value).toMatchObject({ id: expect.any(Number) });
+      expect(() =>
+        // @ts-expect-error — a built Fabricator is not an identity.
+        extern.typed.by(built).will((): User => {
+          throw new Error("unreachable");
+        }),
+      ).toThrowError(NotMockedError);
     });
   });
 

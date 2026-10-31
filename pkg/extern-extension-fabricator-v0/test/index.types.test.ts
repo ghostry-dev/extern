@@ -43,14 +43,13 @@ describe("a fabricator schema as an identity", () => {
     expect(value).toBeDefined();
   });
 
-  it("is accepted when already built into a Fabricator", async () => {
+  it("is rejected once built into a Fabricator", () => {
     const built = new fabricator.Fabricator(user);
 
-    await extern.testing(() => {
-      const value = built.fabricate();
-      assertType<Equals<typeof value, { id: number; name: string }>>();
-      expect(value).toBeDefined();
-    });
+    // @ts-expect-error — a built Fabricator is not an identity.
+    extern.typed.by(built);
+
+    expect(true).toBe(true);
   });
 
   it("is rejected on an instance with no extension", () => {
@@ -268,16 +267,6 @@ describe("a schema whose value may be `undefined` or `null`", () => {
     assertType<Equals<Tree["children"], Tree[]>>();
 
     expect(value.children).toEqual([]);
-  });
-
-  it("keeps it when the identity is already a built Fabricator", () => {
-    const built = new fabricator.Fabricator(T.undefinable(row));
-
-    const value = extern.typed.by(built).will(() => undefined);
-
-    assertType<Equals<typeof value, Row | undefined>>();
-
-    expect(value).toBeUndefined();
   });
 });
 

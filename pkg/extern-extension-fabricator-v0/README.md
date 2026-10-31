@@ -24,6 +24,8 @@ export const extern = await initializeExtern({
 The widening applies to **this instance alone**. An extern instance without the
 extension still rejects fabricator schemas as identities, exactly as before.
 
+Only a schema is an identity, never a built Fabricator. Given one, a block could either continue its streams or build afresh from its schema, and nothing at the call site would say which. Pass the schema it was built from instead.
+
 ## Using it
 
 ```ts
