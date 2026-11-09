@@ -16,7 +16,7 @@ import { fabricatorExtension } from "@ghostry/extern-extension-fabricator-v0";
 
 const fabricator = initializeFabricator({ salt: "my-suite" });
 
-export const extern = await initializeExtern({
+export const extern = initializeExtern({
   extensions: [fabricatorExtension({ instance: fabricator })],
 });
 ```

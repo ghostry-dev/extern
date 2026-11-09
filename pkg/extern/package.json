@@ -20,6 +20,15 @@
   "homepage": "https://github.com/ghostry-dev/extern",
   "bugs": "https://github.com/ghostry-dev/extern/issues",
   "type": "module",
+  "imports": {
+    "#scope": {
+      "types": "./src/Scope/Async.ts",
+      "deno": "./src/Scope/Async.ts",
+      "node": "./dist/esm/Scope/Async.js",
+      "bun": "./dist/esm/Scope/Async.js",
+      "default": "./dist/esm/Scope/Sync.js"
+    }
+  },
   "types": "./dist/types/index.d.ts",
   "module": "./dist/esm/index.js",
   "exports": {

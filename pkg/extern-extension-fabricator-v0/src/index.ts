@@ -39,7 +39,7 @@ export interface Configuration {
  * identities.
  *
  * ```ts
- * const extern = await initialize({
+ * const extern = initialize({
  *   extensions: [fabricatorExtension({ instance: fabricator })],
  * });
  * ```

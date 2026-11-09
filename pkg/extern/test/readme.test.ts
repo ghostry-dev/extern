@@ -261,7 +261,7 @@ describe("the README's `## Harnessing` snippets", () => {
 
   const wire = async () => {
     /** `extern.ts`, from the README's opening example. */
-    const extern = await initialize({});
+    const extern = initialize({});
 
     /** `source.ts`, from the same. */
     const identity = extern.T<string>();

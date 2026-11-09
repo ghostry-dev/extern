@@ -1,5 +1,8 @@
+import { toScope as resolvedScope } from "#scope";
+import { AsyncScopeUnavailableError } from "./Error";
 import { compose, type Extension, type Extensions } from "./Extension";
-import { asyncScope, scope, syncScope, type Scope } from "./Scope";
+import type { Scope } from "./Scope";
+import { toScope as syncScope } from "./Scope/Sync";
 
 /**
  * The available configurations for this library.
@@ -10,13 +13,18 @@ export interface Configuration<
   /**
    * Forces a specific execution scope for tests.
    *
-   * `async` requires the execution environment to support `node:async_hooks`.
+   * Left unset, the `#scope` package import picks the carrier. Every runtime
+   * with `node:async_hooks` — Node, Bun, and Deno — gets the
+   * `AsyncLocalStorage` carrier, whose frames survive `await` and isolate
+   * concurrent `testing` blocks. Anywhere else resolves to the synchronous
+   * carrier.
    *
-   * `sync` has no execution environment requirements, but it does prevent tests
-   * using `extern.testing` from being run concurrently.
+   * `async` demands that carrier and throws {@link AsyncScopeUnavailableError}
+   * when this runtime resolved to the synchronous one.
    *
-   * When not specified, `async` will be used by default if the execution
-   * environment supports it, with `sync` used as the fallback.
+   * `sync` forces the synchronous carrier. It has no execution-environment
+   * requirements, and it prevents tests using `extern.testing` from running
+   * concurrently.
    *
    * @default undefined
    */
@@ -42,23 +50,30 @@ export interface Config {
   readonly extensions: Extensions;
 }
 
-export const fromConfiguration = async (
-  configuration: Configuration,
-): Promise<Config> => {
+export const fromConfiguration = (configuration: Configuration): Config => {
   return {
-    scope: await $scope(configuration),
+    scope: $scope(configuration),
     extensions: compose(configuration.extensions ?? []),
   };
 };
 
-const $scope = (configuration: Configuration): Promise<Scope> => {
+/**
+ * One carrier per `initialize()`. Two instances must not share a synchronous
+ * slot: a testing block on one would then look like concurrency to the other.
+ */
+const $scope = (configuration: Configuration): Scope => {
   switch (configuration.scope) {
-    case "async":
-      return asyncScope();
+    case "async": {
+      const scope = resolvedScope();
+
+      if (!scope.asynchronous) throw new AsyncScopeUnavailableError();
+
+      return scope;
+    }
     case "sync":
-      return Promise.resolve(syncScope());
+      return syncScope();
     case undefined:
-      return scope();
+      return resolvedScope();
     default:
       throw new Error(
         `Invalid configuration option for scope: ${configuration.scope}`,

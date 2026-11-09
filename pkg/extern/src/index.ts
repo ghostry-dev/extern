@@ -33,6 +33,7 @@ export { T } from "./T.ts";
 
 export {
   AmbiguousIdentityError,
+  AsyncScopeUnavailableError,
   CleanupFailedError,
   DuplicateMockError,
   ExtensionFrameResultError,
@@ -97,12 +98,12 @@ export interface Initialized<$Lambda extends TypeLambda = never> {
  * `$Extensions[number]` is `never`, and every identity type stays exactly as it
  * was.
  */
-export const initialize = async <
+export const initialize = <
   $Extensions extends readonly Extension.Any[] = readonly [],
 >(
   config: Configuration<$Extensions> = {},
-): Promise<Initialized<LambdaOf<$Extensions[number]>>> => {
-  const $config = await fromConfiguration(config);
+): Initialized<LambdaOf<$Extensions[number]>> => {
+  const $config = fromConfiguration(config);
 
   return {
     validated: validated($config),

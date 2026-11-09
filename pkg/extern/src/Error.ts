@@ -65,6 +65,27 @@ export class IllegalConcurrencyTestingError extends ExternError {
 }
 
 /**
+ * The error thrown when `initialize({ scope: "async" })` runs on a runtime
+ * whose `#scope` condition resolved to the synchronous carrier.
+ *
+ * That condition is `default`: anywhere without `node:async_hooks`, in practice
+ * a browser bundle. Node, Bun, and Deno resolve `#scope` to the
+ * `AsyncLocalStorage` carrier and never raise this. Omitting `scope` on a
+ * synchronous runtime takes that carrier; naming `"async"` demands it, and a
+ * demand this runtime cannot meet fails with this error.
+ */
+export class AsyncScopeUnavailableError extends ExternError {
+  constructor() {
+    super();
+    this.name = "AsyncScopeUnavailableError";
+    this.message =
+      '`initialize({ scope: "async" })` requires `node:async_hooks`, and this '
+      + "runtime has none — `#scope` resolved to the synchronous carrier. Omit "
+      + '`scope`, or pass `scope: "sync"`.';
+  }
+}
+
+/**
  * The error thrown when a mock is defined with the same schema and
  * disambiguation as a previously defined mock.
  */

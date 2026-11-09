@@ -20,7 +20,7 @@ import { initialize } from "@ghostry/extern";
 /**
  * Initialize an instance of the library with optional configuration.
  */
-export const extern = await initialize({});
+export const extern = initialize({});
 ```
 
 ### Source (`source.ts`)
@@ -398,7 +398,7 @@ requiring a mock.
 ```ts
 import { fabricatorExtension } from "@ghostry/extern-extension-fabricator-v0";
 
-export const extern = await initialize({
+export const extern = initialize({
   extensions: [fabricatorExtension({ instance: fabricator })],
 });
 ```
@@ -766,8 +766,3 @@ written inside a framed body. An existing suite that calls `extern.testing`
 itself will meet this immediately — under the default `async` scope that same
 nesting is permitted, but the inner block shadows rather than merges, so the
 enclosing test's mocks are invisible within it.
-
-### Requirements
-
-`initialize` is asynchronous and the instance is needed at registration time, so
-the wiring module needs top-level `await` — ESM only.

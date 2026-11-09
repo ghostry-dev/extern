@@ -16,7 +16,7 @@ import { fabricatorExtension } from "../src";
 
 const fabricator = initializeFabricator({ salt: "my-suite" });
 
-const extern = await initializeExtern({
+const extern = initializeExtern({
   extensions: [fabricatorExtension({ instance: fabricator })],
 });
 
