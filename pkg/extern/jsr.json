@@ -1,6 +1,6 @@
 {
   "name": "@ghostry/extern",
-  "version": "0.0.15",
+  "version": "0.0.17",
   "exports": { ".": "./src/index.ts", "./harnessing": "./src/harnessing.ts" },
   "publish": { "exclude": ["test"] }
 }

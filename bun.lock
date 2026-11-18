@@ -15,21 +15,21 @@
     },
     "pkg/extern": {
       "name": "@ghostry/extern",
-      "version": "0.0.16",
+      "version": "0.0.17",
       "devDependencies": {
         "@ghostry/harness": "^0.0.7",
       },
     },
     "pkg/extern-extension-fabricator-v0": {
       "name": "@ghostry/extern-extension-fabricator-v0",
-      "version": "0.0.6",
+      "version": "0.0.7",
       "devDependencies": {
         "@ghostry/extern": "workspace:*",
         "@ghostry/fabricator": "^0.0.15",
         "@ghostry/harness": "^0.0.7",
       },
       "peerDependencies": {
-        "@ghostry/extern": ">=0.0.14 <0.1.0",
+        "@ghostry/extern": ">=0.0.17 <0.1.0",
         "@ghostry/fabricator": ">=0.0.15 <0.1.0",
       },
     },
