@@ -7,7 +7,7 @@ import {
 import { initialize as initializeFabricator } from "@ghostry/fabricator";
 import { describe, expect, it } from "bun:test";
 import * as S from "sury";
-import { fabricatorExtension, type FabricatorLambda } from "../src";
+import { fabricatorExtension, type FabricatorLambda } from "../src/index.ts";
 
 const fabricator = initializeFabricator({ salt: "fabrication-suite" });
 const { T } = fabricator;

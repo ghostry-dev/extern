@@ -1,8 +1,8 @@
 import { initialize as initializeExtern } from "@ghostry/extern";
 import { initialize as initializeFabricator } from "@ghostry/fabricator";
 import { describe, expect, it } from "bun:test";
-import { fabricatorExtension } from "../src";
-import { fabricateElsewhere } from "./fixtures/elsewhere";
+import { fabricatorExtension } from "../src/index.ts";
+import { fabricateElsewhere } from "./fixtures/elsewhere.ts";
 
 const fabricator = initializeFabricator({ salt: "determinism-suite" });
 const { T } = fabricator;

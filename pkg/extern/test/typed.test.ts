@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, it } from "bun:test";
 import * as S from "sury";
-import { initialize } from "../src";
+import { initialize } from "../src/index.ts";
 
 describe("`extern.typed`", async () => {
   const extern = await initialize();

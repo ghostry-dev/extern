@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import type { Context } from "../Context";
-import type { Scope } from "../Scope";
+import type { Context } from "../Context.ts";
+import type { Scope } from "../Scope.ts";
 
 /**
  * The asynchronous carrier, and the **only** module in this package importing

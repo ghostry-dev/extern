@@ -1,7 +1,7 @@
 import { initialize as initializeExtern } from "@ghostry/extern";
 import { initialize as initializeFabricator } from "@ghostry/fabricator";
 import { describe, expect, it } from "bun:test";
-import { fabricatorExtension } from "../src";
+import { fabricatorExtension } from "../src/index.ts";
 
 const fabricator = initializeFabricator({ salt: "produce-suite" });
 const { T } = fabricator;

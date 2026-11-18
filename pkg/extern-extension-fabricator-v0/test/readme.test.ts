@@ -4,7 +4,7 @@ import {
   NotMockedError,
 } from "@ghostry/extern";
 import { initialize as initializeFabricator } from "@ghostry/fabricator";
-import { fabricatorExtension } from "../src";
+import { fabricatorExtension } from "../src/index.ts";
 
 /**
  * The README's snippets, executed as written. Only the surrounding plumbing is

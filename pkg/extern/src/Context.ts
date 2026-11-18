@@ -1,6 +1,6 @@
-import type { Produce } from "./Extension";
-import type { IdentityMap } from "./Spy";
-import type { AnyIdentity } from "./Types";
+import type { Produce } from "./Extension.ts";
+import type { IdentityMap } from "./Spy.ts";
+import type { AnyIdentity } from "./Types.ts";
 
 export interface Context {
   readonly spies: IdentityMap;

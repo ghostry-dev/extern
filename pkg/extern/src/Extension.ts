@@ -1,7 +1,7 @@
-import { withCleanup } from "./Cleanup";
-import { AmbiguousIdentityError, ExtensionUnavailableError } from "./Error";
-import { enterFrame, type Frame, type Opened } from "./Frame";
-import { isThenable } from "./Util";
+import { withCleanup } from "./Cleanup.ts";
+import { AmbiguousIdentityError, ExtensionUnavailableError } from "./Error.ts";
+import { enterFrame, type Frame, type Opened } from "./Frame.ts";
+import { isThenable } from "./Util.ts";
 
 /**
  * A type-level function from `In` to `Out` — the carrier that lets an extension

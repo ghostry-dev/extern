@@ -1,7 +1,7 @@
-import type { Config } from "../../../../../Config";
-import type { StandardSchemaV1 } from "../../../../../StandardSchema";
-import type { Disambiguation, Promisable } from "../../../../../Types";
-import { will as $will } from "../../../../Core";
+import type { Config } from "../../../../../Config.ts";
+import type { StandardSchemaV1 } from "../../../../../StandardSchema.ts";
+import type { Disambiguation, Promisable } from "../../../../../Types.ts";
+import { will as $will } from "../../../../Core.ts";
 
 export type will<$Out, $In> = (
   fn: (given: $In) => Promisable<$Out>,

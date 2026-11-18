@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import * as S from "sury";
-import { initialize } from "../src";
-import { CleanupFailedError } from "../src/Error";
-import type { Extension } from "../src/Extension";
-import { isThenable } from "../src/Util";
-import { boxed, type BoxedLambda } from "./fixtures/extension";
+import { initialize } from "../src/index.ts";
+import { CleanupFailedError } from "../src/Error.ts";
+import type { Extension } from "../src/Extension.ts";
+import { isThenable } from "../src/Util.ts";
+import { boxed, type BoxedLambda } from "./fixtures/extension.ts";
 
 /**
  * An observer with teardown, written the way an extension author writes one:

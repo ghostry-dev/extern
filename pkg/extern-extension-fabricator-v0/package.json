@@ -38,8 +38,9 @@
   "scripts": {
     "build:reset": "rm -rf ./dist",
     "build:compile": "bunx --no-install --bun rslib build --config ./rslib.config.ts",
+    "build:verify": "tsc --noEmit -p ./tsconfig.verify.json",
     "build:clean": "find ./dist -type f -name '*.tsbuildinfo' -delete",
-    "build": "bun run build:reset && bun run build:compile && bun run build:clean",
+    "build": "bun run build:reset && bun run build:compile && bun run build:verify && bun run build:clean",
     "check": "tsc --noEmit",
     "test": "bun run check && bun test"
   },
@@ -48,11 +49,11 @@
   ],
   "peerDependencies": {
     "@ghostry/extern": ">=0.0.14 <0.1.0",
-    "@ghostry/fabricator": ">=0.0.13 <0.1.0"
+    "@ghostry/fabricator": ">=0.0.15 <0.1.0"
   },
   "devDependencies": {
     "@ghostry/extern": "workspace:*",
-    "@ghostry/fabricator": "^0.0.13",
-    "@ghostry/harness": "^0.0.5"
+    "@ghostry/fabricator": "^0.0.15",
+    "@ghostry/harness": "^0.0.7"
   }
 }

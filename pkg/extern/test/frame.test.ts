@@ -1,13 +1,13 @@
 import { describe, expect, it, spyOn } from "bun:test";
 import { AsyncLocalStorage } from "node:async_hooks";
-import { initialize } from "../src";
+import { initialize } from "../src/index.ts";
 import {
   CleanupFailedError,
   ExtensionFrameResultError,
   ExtensionFrameSessionError,
   ExtensionFrameYieldError,
-} from "../src/Error";
-import type { Extension } from "../src/Extension";
+} from "../src/Error.ts";
+import type { Extension } from "../src/Extension.ts";
 
 /**
  * The two hazards a per-block extension scope has to get right, each written

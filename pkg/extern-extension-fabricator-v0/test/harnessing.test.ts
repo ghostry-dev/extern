@@ -13,7 +13,7 @@ import {
   type Framework,
 } from "@ghostry/harness";
 import { describe, expect, it } from "bun:test";
-import { fabricatorExtension, type FabricatorLambda } from "../src";
+import { fabricatorExtension, type FabricatorLambda } from "../src/index.ts";
 
 /**
  * What happens when this extension's `wrap` runs _inside_ the `wrap` that

@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, it } from "bun:test";
-import { initialize } from "../src";
-import type { Promisable } from "../src/Types";
+import { initialize } from "../src/index.ts";
+import type { Promisable } from "../src/Types.ts";
 
 describe("`extern.effect`", async () => {
   const extern = await initialize();

@@ -1,13 +1,13 @@
-import { DuplicateMockError } from "./Error";
-import type { TypeLambda } from "./Extension";
-import { IdentityMap, type Spy, type Spyable } from "./Spy";
+import { DuplicateMockError } from "./Error.ts";
+import type { TypeLambda } from "./Extension.ts";
+import { IdentityMap, type Spy, type Spyable } from "./Spy.ts";
 import {
   type AnyIdentity,
   type Disambiguation,
   type Identity,
   type Options,
-} from "./Types";
-import { augmentFunction, callerStack } from "./Util";
+} from "./Types.ts";
+import { augmentFunction, callerStack } from "./Util.ts";
 
 /**
  * The function used to build a mock in a testing block.

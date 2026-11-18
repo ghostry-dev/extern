@@ -1,9 +1,9 @@
-import type { Config } from "../Config";
-import { NotMockedError } from "../Error";
-import { approximately } from "../Mocking";
-import { produce, shouldProduce } from "../Production";
-import type { Execution } from "../Spy";
-import { type AnyIdentity, type Params } from "../Types";
+import type { Config } from "../Config.ts";
+import { NotMockedError } from "../Error.ts";
+import { approximately } from "../Mocking.ts";
+import { produce, shouldProduce } from "../Production.ts";
+import type { Execution } from "../Spy.ts";
+import { type AnyIdentity, type Params } from "../Types.ts";
 
 export const will = <$Out, $In>(
   config: Config,

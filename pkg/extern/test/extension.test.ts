@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import * as S from "sury";
-import { initialize } from "../src";
+import { initialize } from "../src/index.ts";
 import {
   AmbiguousIdentityError,
   ExtensionUnavailableError,
   NotMockedError,
   UnusedMocksError,
-} from "../src/Error";
-import { isThenable } from "../src/Util";
+} from "../src/Error.ts";
+import { isThenable } from "../src/Util.ts";
 import {
   boxed,
   boxedExtension,
@@ -17,7 +17,7 @@ import {
   opened,
   tagged,
   taggedExtension,
-} from "./fixtures/extension";
+} from "./fixtures/extension.ts";
 
 describe("an extension", () => {
   describe("an unmocked block whose identity it claims", () => {

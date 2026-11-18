@@ -1,5 +1,5 @@
-import type { Config } from "../Config";
-import { type Params, type Promisable } from "../Types";
+import type { Config } from "../Config.ts";
+import { type Params, type Promisable } from "../Types.ts";
 
 export const will = <$Out extends Promisable<void>, $In>(
   config: Config,

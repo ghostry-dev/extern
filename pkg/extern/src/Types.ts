@@ -1,6 +1,6 @@
-import type { Apply, TypeLambda } from "./Extension";
-import type { StandardSchemaV1 } from "./StandardSchema";
-import type { T } from "./T";
+import type { Apply, TypeLambda } from "./Extension.ts";
+import type { StandardSchemaV1 } from "./StandardSchema.ts";
+import type { T } from "./T.ts";
 
 export type Promisable<$T> = $T | Promise<$T>;
 

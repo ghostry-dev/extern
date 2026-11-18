@@ -1,5 +1,5 @@
-import { CleanupFailedError } from "./Error";
-import { isThenable } from "./Util";
+import { CleanupFailedError } from "./Error.ts";
+import { isThenable } from "./Util.ts";
 
 /**
  * Whether the block a {@link Cleanup} settles against succeeded.

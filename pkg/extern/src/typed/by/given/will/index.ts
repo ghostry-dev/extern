@@ -1,6 +1,6 @@
-import type { Config } from "../../../../Config";
-import type { AnyIdentity, Promisable, Promised } from "../../../../Types";
-import { will as $will } from "../../../Core";
+import type { Config } from "../../../../Config.ts";
+import type { AnyIdentity, Promisable, Promised } from "../../../../Types.ts";
+import { will as $will } from "../../../Core.ts";
 
 export type will<$Out, $In> = <$O extends Promisable<$Out>>(
   fn: (given: $In) => $O,

@@ -12,8 +12,8 @@ import {
   T,
   UnusedMocksError,
   type Initialized,
-} from "../src";
-import { integration, type ExternTestContext } from "../src/harnessing";
+} from "../src/index.ts";
+import { integration, type ExternTestContext } from "../src/harnessing.ts";
 
 /**
  * The integration, driven through the **real** `@ghostry/harness` rather than a

@@ -1,11 +1,11 @@
-import type { Config } from "../Config";
-import type { Context } from "../Context";
-import { UnusedMocksError } from "../Error";
-import type { TypeLambda } from "../Extension";
-import { mocking, type Mocker } from "../Mocking";
-import type { IdentityMap, Spy } from "../Spy";
-import { never } from "../Types";
-import { isThenable } from "../Util";
+import type { Config } from "../Config.ts";
+import type { Context } from "../Context.ts";
+import { UnusedMocksError } from "../Error.ts";
+import type { TypeLambda } from "../Extension.ts";
+import { mocking, type Mocker } from "../Mocking.ts";
+import type { IdentityMap, Spy } from "../Spy.ts";
+import { never } from "../Types.ts";
+import { isThenable } from "../Util.ts";
 
 export type Testing<$Lambda extends TypeLambda = never> = <$Return>(
   fn: (mocker: Mocker<$Lambda>) => $Return,

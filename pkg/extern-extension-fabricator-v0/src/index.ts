@@ -1,9 +1,9 @@
 import type { Extension, Session } from "@ghostry/extern";
 import { initialize, layer } from "@ghostry/fabricator";
 import { isSchema, type Buildable } from "@ghostry/fabricator/internal";
-import type { FabricatorLambda } from "./Types";
+import type { FabricatorLambda } from "./Types.ts";
 
-export type { FabricatorLambda, HandleFor, Schema } from "./Types";
+export type { FabricatorLambda, HandleFor, Schema } from "./Types.ts";
 
 /**
  * A `@ghostry/fabricator` instance from its own `initialize()` call.

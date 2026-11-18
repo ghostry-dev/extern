@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, it } from "bun:test";
-import { initialize, type Initialized } from "../../src";
-import { DuplicateMockError, UnusedMocksError } from "../../src/Error";
+import { initialize, type Initialized } from "../../src/index.ts";
+import { DuplicateMockError, UnusedMocksError } from "../../src/Error.ts";
 
 describe("`extern.testing`", async () => {
   const extern = await initialize();

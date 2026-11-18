@@ -1,7 +1,13 @@
-import type { Apply, HandleOf, TypeLambda } from "./Extension";
-import type { StandardSchemaV1 } from "./StandardSchema";
-import type { T } from "./T";
-import type { AnyIdentity, Disambiguation, Mode, Name, Options } from "./Types";
+import type { Apply, HandleOf, TypeLambda } from "./Extension.ts";
+import type { StandardSchemaV1 } from "./StandardSchema.ts";
+import type { T } from "./T.ts";
+import type {
+  AnyIdentity,
+  Disambiguation,
+  Mode,
+  Name,
+  Options,
+} from "./Types.ts";
 
 /**
  * Information captured about each use of a mock during a testing block.

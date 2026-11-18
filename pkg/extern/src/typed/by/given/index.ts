@@ -1,6 +1,6 @@
-import type { Config } from "../../../Config";
-import type { AnyIdentity } from "../../../Types";
-import { will } from "./will";
+import type { Config } from "../../../Config.ts";
+import type { AnyIdentity } from "../../../Types.ts";
+import { will } from "./will/index.ts";
 
 export interface Given<$Out, $In> {
   will: will<$Out, $In>;

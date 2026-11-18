@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import * as S from "sury";
-import { initialize, type Initialized } from "../../src";
+import { initialize, type Initialized } from "../../src/index.ts";
 import {
   IllegalConcurrencyTestingError,
   NotMockedError,
   UnusedMocksError,
-} from "../../src/Error";
+} from "../../src/Error.ts";
 
 describe("`extern.testing`", async () => {
   const extern = await initialize();

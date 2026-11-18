@@ -1,7 +1,7 @@
-import type { Config } from "../Config";
-import type { TypeLambda } from "../Extension";
-import type { Identity } from "../Types";
-import { by, type By } from "./by";
+import type { Config } from "../Config.ts";
+import type { TypeLambda } from "../Extension.ts";
+import type { Identity } from "../Types.ts";
+import { by, type By } from "./by/index.ts";
 
 /**
  * `$Lambda` carries this instance's extensions, widening what `by()` accepts as

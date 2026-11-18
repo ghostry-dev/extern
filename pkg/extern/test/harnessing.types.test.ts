@@ -1,14 +1,14 @@
 import { describe, expect, it } from "bun:test";
-import { initialize } from "../src";
-import type { TypeLambda } from "../src/Extension";
-import type { Mocker } from "../src/Mocking";
+import { initialize } from "../src/index.ts";
+import type { TypeLambda } from "../src/Extension.ts";
+import type { Mocker } from "../src/Mocking.ts";
 import {
   integration,
   type Established,
   type ExternTestContext,
   type Integration,
   type Mocking,
-} from "../src/harnessing";
+} from "../src/harnessing.ts";
 import {
   boxed,
   boxedExtension,
@@ -16,7 +16,7 @@ import {
   taggedExtension,
   type BoxedLambda,
   type TaggedLambda,
-} from "./fixtures/extension";
+} from "./fixtures/extension.ts";
 
 /**
  * These assertions are enforced by `tsc --noEmit` (the package's `check`

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import * as S from "sury";
-import { initialize, type Initialized } from "../src";
+import { initialize, type Initialized } from "../src/index.ts";
 import type {
   Apply,
   Extension,
@@ -8,9 +8,9 @@ import type {
   LambdaOf,
   Produce,
   Session,
-} from "../src/Extension";
-import type { Testing } from "../src/testing";
-import type { Identity } from "../src/Types";
+} from "../src/Extension.ts";
+import type { Testing } from "../src/testing/index.ts";
+import type { Identity } from "../src/Types.ts";
 import {
   boxed,
   boxedExtension,
@@ -22,7 +22,7 @@ import {
   type BoxedLambda,
   type Tagged,
   type TaggedLambda,
-} from "./fixtures/extension";
+} from "./fixtures/extension.ts";
 
 /**
  * These assertions are enforced by `tsc --noEmit` (the package's `check`

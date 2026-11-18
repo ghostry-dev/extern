@@ -1,8 +1,8 @@
-import type { Config } from "../../Config";
-import type { AnyIdentity } from "../../Types";
-import { given } from "./given";
-import { named } from "./named";
-import { will } from "./will";
+import type { Config } from "../../Config.ts";
+import type { AnyIdentity } from "../../Types.ts";
+import { given } from "./given/index.ts";
+import { named } from "./named/index.ts";
+import { will } from "./will/index.ts";
 
 export interface By<$Out> {
   named: named<$Out>;

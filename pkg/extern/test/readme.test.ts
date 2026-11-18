@@ -3,9 +3,9 @@ import {
   type Framework as HarnessFramework,
 } from "@ghostry/harness";
 import { describe, expect, it } from "bun:test";
-import { initialize, MockingUnavailableError } from "../src";
-import type { Extension, HandleLambda, TypeLambda } from "../src/Extension";
-import { integration } from "../src/harnessing";
+import { initialize, MockingUnavailableError } from "../src/index.ts";
+import type { Extension, HandleLambda, TypeLambda } from "../src/Extension.ts";
+import { integration } from "../src/harnessing.ts";
 
 /**
  * The README's `## Extensions` snippets, executed as written.

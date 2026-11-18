@@ -1,7 +1,7 @@
-import type { Config } from "./Config";
-import type { Context } from "./Context";
-import { ExtensionUnavailableError } from "./Error";
-import type { AnyIdentity } from "./Types";
+import type { Config } from "./Config.ts";
+import type { Context } from "./Context.ts";
+import { ExtensionUnavailableError } from "./Error.ts";
+import type { AnyIdentity } from "./Types.ts";
 
 /**
  * Should a block with this identity and no matching mock produce a value rather

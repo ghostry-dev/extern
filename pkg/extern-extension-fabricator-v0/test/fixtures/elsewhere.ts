@@ -1,5 +1,5 @@
 import type { Initialized } from "@ghostry/extern";
-import type { FabricatorLambda } from "../../src";
+import type { FabricatorLambda } from "../../src/index.ts";
 
 /**
  * Opens a testing block from a _different file_ than the suite that calls this.

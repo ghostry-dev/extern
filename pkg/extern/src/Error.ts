@@ -1,5 +1,5 @@
-import type { Spy } from "./Spy";
-import type { StandardSchemaV1 } from "./StandardSchema";
+import type { Spy } from "./Spy.ts";
+import type { StandardSchemaV1 } from "./StandardSchema.ts";
 
 /**
  * Base error class from which more specific errors inherit.

@@ -1,7 +1,7 @@
-import type { Context } from "../Context";
-import { IllegalConcurrencyTestingError } from "../Error";
-import type { Scope } from "../Scope";
-import { isThenable } from "../Util";
+import type { Context } from "../Context.ts";
+import { IllegalConcurrencyTestingError } from "../Error.ts";
+import type { Scope } from "../Scope.ts";
+import { isThenable } from "../Util.ts";
 
 /**
  * The synchronous carrier: one context at a time, cleared when the block

@@ -1,11 +1,11 @@
 import { describe, expect, expectTypeOf, it } from "bun:test";
 import * as S from "sury";
-import { initialize } from "../../src";
+import { initialize } from "../../src/index.ts";
 import {
   IllegalConcurrencyTestingError,
   UnusedMocksError,
-} from "../../src/Error";
-import { isThenable } from "../../src/Util";
+} from "../../src/Error.ts";
+import { isThenable } from "../../src/Util.ts";
 
 describe("`extern.testing` shape", () => {
   describe.each([{ scope: "async" as const }, { scope: "sync" as const }])(

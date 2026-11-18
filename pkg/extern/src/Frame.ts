@@ -1,11 +1,11 @@
-import type { Cleanup, Outcome } from "./Cleanup";
+import type { Cleanup, Outcome } from "./Cleanup.ts";
 import {
   ExtensionFrameResultError,
   ExtensionFrameSessionError,
   ExtensionFrameYieldError,
-} from "./Error";
-import type { Session } from "./Extension";
-import { isThenable } from "./Util";
+} from "./Error.ts";
+import type { Session } from "./Extension.ts";
+import { isThenable } from "./Util.ts";
 
 /**
  * How an extension runs the block when it needs the block to run _inside_

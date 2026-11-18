@@ -1,6 +1,6 @@
-import type { Config } from "../Config";
-import type { StandardSchemaV1 } from "../StandardSchema";
-import { by, type By } from "./by";
+import type { Config } from "../Config.ts";
+import type { StandardSchemaV1 } from "../StandardSchema.ts";
+import { by, type By } from "./by/index.ts";
 
 export interface Validated {
   by: <$Out>(schema: StandardSchemaV1<$Out>) => By<$Out>;

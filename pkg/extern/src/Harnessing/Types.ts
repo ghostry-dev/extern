@@ -1,5 +1,5 @@
-import type { TypeLambda } from "../Extension";
-import type { Mocker } from "../Mocking";
+import type { TypeLambda } from "../Extension.ts";
+import type { Mocker } from "../Mocking.ts";
 
 /**
  * What identifies one registered test or suite.

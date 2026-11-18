@@ -3,7 +3,7 @@ import type {
   HandleLambda,
   Session,
   TypeLambda,
-} from "../../src/Extension";
+} from "../../src/Extension.ts";
 
 /**
  * A stub extension, defined entirely in this repo's own tests with no real

@@ -23,7 +23,7 @@ export type {
   TypeLambda,
 } from "./Extension.ts";
 
-export type { AnyIdentity, Identity, Options } from "./Types";
+export type { AnyIdentity, Identity, Options } from "./Types.ts";
 
 export type { Execution, Spy } from "./Spy.ts";
 

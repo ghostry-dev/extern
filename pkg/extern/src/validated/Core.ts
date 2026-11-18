@@ -1,10 +1,10 @@
-import type { Config } from "../Config";
-import { InvalidDataTypeError, NotMockedError } from "../Error";
-import { approximately } from "../Mocking";
-import { produce } from "../Production";
-import type { Execution } from "../Spy";
-import type { StandardSchemaV1 } from "../StandardSchema";
-import type { Params } from "../Types";
+import type { Config } from "../Config.ts";
+import { InvalidDataTypeError, NotMockedError } from "../Error.ts";
+import { approximately } from "../Mocking.ts";
+import { produce } from "../Production.ts";
+import type { Execution } from "../Spy.ts";
+import type { StandardSchemaV1 } from "../StandardSchema.ts";
+import type { Params } from "../Types.ts";
 
 export const will = async <$Out, $In>(
   config: Config,

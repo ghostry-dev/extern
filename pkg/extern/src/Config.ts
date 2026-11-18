@@ -1,8 +1,8 @@
 import { toScope as resolvedScope } from "#scope";
-import { AsyncScopeUnavailableError } from "./Error";
-import { compose, type Extension, type Extensions } from "./Extension";
-import type { Scope } from "./Scope";
-import { toScope as syncScope } from "./Scope/Sync";
+import { AsyncScopeUnavailableError } from "./Error.ts";
+import { compose, type Extension, type Extensions } from "./Extension.ts";
+import type { Scope } from "./Scope.ts";
+import { toScope as syncScope } from "./Scope/Sync.ts";
 
 /**
  * The available configurations for this library.

@@ -1,6 +1,6 @@
-import type { Config } from "../../../Config";
-import type { StandardSchemaV1 } from "../../../StandardSchema";
-import { will } from "./will";
+import type { Config } from "../../../Config.ts";
+import type { StandardSchemaV1 } from "../../../StandardSchema.ts";
+import { will } from "./will/index.ts";
 
 export interface Given<$Out, $In> {
   will: will<$Out, $In>;

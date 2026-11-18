@@ -1,6 +1,6 @@
-import type { Config } from "../../../../Config";
-import type { Disambiguation, Promisable } from "../../../../Types";
-import { will as $will } from "../../../Core";
+import type { Config } from "../../../../Config.ts";
+import type { Disambiguation, Promisable } from "../../../../Types.ts";
+import { will as $will } from "../../../Core.ts";
 
 export type will<$In> = <$Out extends Promisable<void>>(
   fn: (given: $In) => $Out,

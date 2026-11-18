@@ -1,6 +1,6 @@
-import type { Config } from "../../../../Config";
-import type { AnyIdentity, Name } from "../../../../Types";
-import { will } from "./will";
+import type { Config } from "../../../../Config.ts";
+import type { AnyIdentity, Name } from "../../../../Types.ts";
+import { will } from "./will/index.ts";
 
 export interface Given<$Out, $Name extends Name, $In> {
   name: $Name;

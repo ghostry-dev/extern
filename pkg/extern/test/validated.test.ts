@@ -1,7 +1,7 @@
 import { describe, expect, expectTypeOf, it } from "bun:test";
 import * as S from "sury";
-import { initialize } from "../src";
-import { InvalidDataTypeError, InvalidSchemaError } from "../src/Error";
+import { initialize } from "../src/index.ts";
+import { InvalidDataTypeError, InvalidSchemaError } from "../src/Error.ts";
 
 describe("`extern.validated`", async () => {
   const extern = await initialize();
