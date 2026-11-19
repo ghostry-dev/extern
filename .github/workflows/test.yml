@@ -1,3 +1,5 @@
+# Managed by the @ghostry meta repo (.templates/workflows/generate.ts). Edit it
+# there and run `bun .scripts/sync.ts`; changes made here are overwritten.
 name: Test
 
 on:
@@ -7,10 +9,13 @@ on:
         required: true
         type: string
         description: >-
-          The workspace directory under `pkg/` to test. Scoped per package
-          so that one package's failures cannot gate another's release —
-          `@ghostry/extern` in particular must not be held back by a package
-          that integrates a third-party library.
+          The package's id: the repo name for a single-package repo, or its
+          directory name under `pkg/`. One job per package, so a package that
+          fails blocks only its own dependents and its own release.
+      path:
+        required: true
+        type: string
+        description: The package directory relative to the repo root (`.` or `pkg/<id>`).
       build-run-id:
         required: true
         type: string
@@ -21,10 +26,10 @@ jobs:
     name: Test
     permissions:
       actions: read
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
@@ -35,11 +40,12 @@ jobs:
         run: bun install --frozen-lockfile
 
       ##
-      # Suites resolve their dependencies through built output rather than
-      # source, so `@ghostry/extern`'s `dist` has to be in place for any
-      # package's tests — its own included.
+      # Suites resolve packages through built output rather than source, so
+      # the package's own `dist` has to be in place, and so does the `dist`
+      # of every in-repo package it depends on.
       #
       - name: Download `@ghostry/extern`
+        if: contains(fromJSON('["extern-extension-fabricator-v0"]'), inputs.package)
         uses: actions/download-artifact@v8
         with:
           name: pkg-extern
@@ -48,15 +54,14 @@ jobs:
           run-id: ${{ inputs.build-run-id }}
           repository: ${{ github.repository }}
 
-      - name: Download `@ghostry/${{ inputs.package }}`
-        if: inputs.package != 'extern'
+      - name: Download `${{ inputs.package }}`
         uses: actions/download-artifact@v8
         with:
           name: pkg-${{ inputs.package }}
-          path: pkg/${{ inputs.package }}/dist
+          path: ${{ inputs.path }}/dist
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.build-run-id }}
           repository: ${{ github.repository }}
 
       - name: Test
-        run: bun --cwd=pkg/${{ inputs.package }} run test
+        run: bun --cwd=${{ inputs.path }} run test

@@ -1,6 +1,12 @@
+# Managed by the @ghostry meta repo (.templates/workflows/generate.ts). Edit it
+# there and run `bun .scripts/sync.ts`; changes made here are overwritten.
 ##
 # Changing a package's version in a commit to main publishes it under that
-# version.
+# version. The GitHub release is created with an empty body; notes are written
+# afterwards with the meta repo's release-notes skill.
+#
+# This file's name matters: each package's npm trusted publisher names
+# `main.yml`, since npm checks the calling workflow, not `publish.yml`.
 #
 name: Build, Test, and Release
 
@@ -9,30 +15,13 @@ on:
     branches:
       - main
 
-##
-# Build and test are scoped per package so that a release is gated only by its
-# own package. `@ghostry/extern` publishes on `build-extern` + `test-extern`
-# alone: the fabricator extension integrates a third-party library on its own
-# release cadence, and a break there must never hold back extern itself.
-#
-# Note the one coupling this does *not* remove. `bun install` is workspace-wide,
-# so every job installs every package's dependencies — a dependency that cannot
-# resolve at all still fails each job at the install step. What is decoupled is
-# everything after that: building, type-checking, and testing.
-#
 jobs:
   build-extern:
     name: Build `extern`
     uses: ./.github/workflows/build.yml
     with:
       package: extern
-
-  build-extern-extension-fabricator-v0:
-    name: Build `extern-extension-fabricator-v0`
-    uses: ./.github/workflows/build.yml
-    needs: [build-extern]
-    with:
-      package: extern-extension-fabricator-v0
+      path: pkg/extern
 
   test-extern:
     name: Test `extern`
@@ -42,115 +31,109 @@ jobs:
       actions: read
     with:
       package: extern
+      path: pkg/extern
       build-run-id: ${{ needs.build-extern.outputs.run-id }}
+
+  build-extern-extension-fabricator-v0:
+    name: Build `extern-extension-fabricator-v0`
+    uses: ./.github/workflows/build.yml
+    needs: [build-extern]
+    with:
+      package: extern-extension-fabricator-v0
+      path: pkg/extern-extension-fabricator-v0
 
   test-extern-extension-fabricator-v0:
     name: Test `extern-extension-fabricator-v0`
     uses: ./.github/workflows/test.yml
-    needs: [build-extern, build-extern-extension-fabricator-v0]
+    needs: [build-extern-extension-fabricator-v0]
     permissions:
       actions: read
     with:
       package: extern-extension-fabricator-v0
+      path: pkg/extern-extension-fabricator-v0
       build-run-id: ${{ needs.build-extern-extension-fabricator-v0.outputs.run-id }}
 
-  get-version-extern:
-    name: Get current version (extern)
-    runs-on: ubuntu-latest
+  version-extern:
+    name: Check for a release (`extern`)
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
     outputs:
-      version: ${{ steps.read-version.outputs.version }}
+      version: ${{ steps.read.outputs.version }}
+      tag: ${{ steps.read.outputs.tag }}
+      exists: ${{ steps.read.outputs.exists }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
+      - name: Read the version and look for its release
+        id: read
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="v$(jq -r .version pkg/extern/package.json)"
+          tag="extern/$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            exists=true
+          else
+            exists=false
+          fi
+          echo "Release $tag already exists? $exists"
+          echo "exists=$exists" >> $GITHUB_OUTPUT
 
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Read package version
-        id: read-version
-        working-directory: pkg/extern
-        run: echo "version=v$(bunx --no-install npm view ./ version)" >> $GITHUB_OUTPUT
-
-  get-version-extern-extension-fabricator-v0:
-    name: Get current version (extern-extension-fabricator-v0)
-    runs-on: ubuntu-latest
+  version-extern-extension-fabricator-v0:
+    name: Check for a release (`extern-extension-fabricator-v0`)
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
     outputs:
-      version: ${{ steps.read-version.outputs.version }}
+      version: ${{ steps.read.outputs.version }}
+      tag: ${{ steps.read.outputs.tag }}
+      exists: ${{ steps.read.outputs.exists }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
+      - name: Read the version and look for its release
+        id: read
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="v$(jq -r .version pkg/extern-extension-fabricator-v0/package.json)"
+          tag="extern-extension-fabricator-v0/$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            exists=true
+          else
+            exists=false
+          fi
+          echo "Release $tag already exists? $exists"
+          echo "exists=$exists" >> $GITHUB_OUTPUT
 
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Read package version
-        id: read-version
-        working-directory: pkg/extern-extension-fabricator-v0
-        run: echo "version=v$(bunx --no-install npm view ./ version)" >> $GITHUB_OUTPUT
-
-  check-release-extern:
-    name: Check for existing release (extern)
-    needs: [get-version-extern]
-    runs-on: ubuntu-latest
-    outputs:
-      exists: ${{ steps.release-exists.outputs.result }}
-    steps:
-      - name: Find existing release if it exists
-        id: release-exists
-        uses: actions/github-script@v9
-        with:
-          result-encoding: string
-          script: |
-            return github.rest.repos.getReleaseByTag({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag: 'extern/${{ needs.get-version-extern.outputs.version }}',
-            }).then(() => 'true').catch(() => 'false');
-
-      - name: Release `extern/${{ needs.get-version-extern.outputs.version }}` already exists?
-        run: echo "${{ steps.release-exists.outputs.result }}"
-
-  check-release-extern-extension-fabricator-v0:
-    name: Check for existing release (extern-extension-fabricator-v0)
-    needs: [get-version-extern-extension-fabricator-v0]
-    runs-on: ubuntu-latest
-    outputs:
-      exists: ${{ steps.release-exists.outputs.result }}
-    steps:
-      - name: Find existing release if it exists
-        id: release-exists
-        uses: actions/github-script@v9
-        with:
-          result-encoding: string
-          script: |
-            return github.rest.repos.getReleaseByTag({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag: 'extern-extension-fabricator-v0/${{ needs.get-version-extern-extension-fabricator-v0.outputs.version }}',
-            }).then(() => 'true').catch(() => 'false');
-
-      - name: Release `extern-extension-fabricator-v0/${{ needs.get-version-extern-extension-fabricator-v0.outputs.version }}` already exists?
-        run: echo "${{ steps.release-exists.outputs.result }}"
+  ##
+  # A package that depends on another package in this repo publishes after it.
+  # Its dependency range may have a lower bound equal to the version this same
+  # push releases, and JSR resolves that range against npm when it publishes.
+  # `publish.yml` ends only once the new version is visible on npm.
+  #
+  # A job whose `needs` was skipped is skipped too, unless its `if` says
+  # otherwise, and a dependency's publish is skipped whenever it has no new
+  # version. `!cancelled() && !failure()` replaces the implicit `success()`:
+  # it still runs after a skipped publish, and still stops after a failed
+  # build, test, or publish.
+  ##
 
   publish-extern:
-    name: Publish (extern)
-    if: ${{ needs.check-release-extern.outputs.exists == 'false' }}
+    name: Publish (`extern`)
+    if: ${{ needs.version-extern.outputs.exists == 'false' }}
     uses: ./.github/workflows/publish.yml
     needs:
       - build-extern
       - test-extern
-      - get-version-extern
-      - check-release-extern
+      - version-extern
     permissions:
       actions: read
       attestations: write
@@ -158,20 +141,21 @@ jobs:
       id-token: write
     with:
       package: extern
-      version: ${{ needs.get-version-extern.outputs.version }}
+      path: pkg/extern
+      version: ${{ needs.version-extern.outputs.version }}
+      tag: ${{ needs.version-extern.outputs.tag }}
+      release-name: extern ${{ needs.version-extern.outputs.version }}
       build-run-id: ${{ needs.build-extern.outputs.run-id }}
-    secrets:
-      NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
   publish-extern-extension-fabricator-v0:
-    name: Publish (extern-extension-fabricator-v0)
-    if: ${{ needs.check-release-extern-extension-fabricator-v0.outputs.exists == 'false' }}
+    name: Publish (`extern-extension-fabricator-v0`)
+    if: ${{ !cancelled() && !failure() && needs.version-extern-extension-fabricator-v0.outputs.exists == 'false' }}
     uses: ./.github/workflows/publish.yml
     needs:
       - build-extern-extension-fabricator-v0
       - test-extern-extension-fabricator-v0
-      - get-version-extern-extension-fabricator-v0
-      - check-release-extern-extension-fabricator-v0
+      - version-extern-extension-fabricator-v0
+      - publish-extern
     permissions:
       actions: read
       attestations: write
@@ -179,7 +163,8 @@ jobs:
       id-token: write
     with:
       package: extern-extension-fabricator-v0
-      version: ${{ needs.get-version-extern-extension-fabricator-v0.outputs.version }}
+      path: pkg/extern-extension-fabricator-v0
+      version: ${{ needs.version-extern-extension-fabricator-v0.outputs.version }}
+      tag: ${{ needs.version-extern-extension-fabricator-v0.outputs.tag }}
+      release-name: extern-extension-fabricator-v0 ${{ needs.version-extern-extension-fabricator-v0.outputs.version }}
       build-run-id: ${{ needs.build-extern-extension-fabricator-v0.outputs.run-id }}
-    secrets:
-      NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
