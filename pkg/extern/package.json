@@ -23,7 +23,6 @@
   "imports": {
     "#scope": {
       "types": "./src/Scope/Async.ts",
-      "deno": "./src/Scope/Async.ts",
       "node": "./dist/esm/Scope/Async.js",
       "bun": "./dist/esm/Scope/Async.js",
       "default": "./dist/esm/Scope/Sync.js"
