@@ -12,7 +12,7 @@ import {
   initialize as initializeHarness,
   type Framework,
 } from "@ghostry/harness";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import { fabricatorExtension, type FabricatorLambda } from "../src/index.ts";
 
 /**
@@ -34,7 +34,7 @@ const { T } = fabricator;
 type Id = { id: number };
 const schema = T.object({ id: T.number });
 
-const extern = await initializeExtern({
+const extern = initializeExtern({
   scope: "async",
   extensions: [fabricatorExtension({ instance: fabricator })],
 });
@@ -215,7 +215,7 @@ describe("handing the two halves different instances", () => {
    * a block built through it.
    */
   const extendedWith = async (instance: typeof fabricator) => {
-    const extended = await initializeExtern({
+    const extended = initializeExtern({
       scope: "async",
       extensions: [fabricatorExtension({ instance })],
     });
@@ -343,7 +343,7 @@ describe("composed with extern's own harness integration", () => {
   const arrange = async (order: "extern-last" | "extern-first") => {
     const instance = initializeFabricator({ salt: "three-way", clock: CLOCK });
 
-    const composed = await initializeExtern({
+    const composed = initializeExtern({
       scope: "async",
       extensions: [fabricatorExtension({ instance })],
     });
@@ -492,7 +492,7 @@ describe("a fork taken inside a test", () => {
   const forksUnder = async (order: "extern-last" | "extern-first") => {
     const instance = initializeFabricator({ salt: "forking", clock: CLOCK });
 
-    const composed = await initializeExtern({
+    const composed = initializeExtern({
       scope: "async",
       extensions: [fabricatorExtension({ instance })],
     });

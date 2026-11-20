@@ -1,6 +1,6 @@
 import { initialize as initializeExtern } from "@ghostry/extern";
 import { initialize as initializeFabricator } from "@ghostry/fabricator";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import { fabricatorExtension } from "../src/index.ts";
 
 const fabricator = initializeFabricator({ salt: "produce-suite" });
@@ -21,7 +21,7 @@ type User = {
   address: { city: string; zip: number };
 };
 
-const extern = await initializeExtern({
+const extern = initializeExtern({
   scope: "async",
   extensions: [fabricatorExtension({ instance: fabricator })],
 });

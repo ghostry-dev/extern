@@ -1,4 +1,4 @@
-import { expect, it } from "bun:test";
+import { expect, it } from "./index.ts";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 

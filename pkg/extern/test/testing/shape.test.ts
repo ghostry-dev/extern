@@ -1,17 +1,14 @@
-import { describe, expect, expectTypeOf, it } from "bun:test";
+import { describe, expect, expectTypeOf, it } from "../index.ts";
 import * as S from "sury";
 import { initialize } from "../../src/index.ts";
-import {
-  IllegalConcurrencyTestingError,
-  UnusedMocksError,
-} from "../../src/Error.ts";
+import { ExternError } from "../../src/Error.ts";
 import { isThenable } from "../../src/Util.ts";
 
 describe("`extern.testing` shape", () => {
   describe.each([{ scope: "async" as const }, { scope: "sync" as const }])(
     'with `scope: "$scope"`',
-    async ({ scope }) => {
-      const extern = await initialize({ scope });
+    ({ row: { scope } }) => {
+      const extern = initialize({ scope });
       const schema = S.number;
 
       it("returns a sync body synchronously", () => {
@@ -49,7 +46,7 @@ describe("`extern.testing` shape", () => {
           extern.testing(async (mock) => {
             mock(schema).with(1);
           }),
-        ).rejects.toThrowError(UnusedMocksError);
+        ).rejects.toThrowError(ExternError.UnusedMocksError);
       });
 
       it("propagates a sync throw from the body synchronously, without an unused-mock error", () => {
@@ -65,10 +62,10 @@ describe("`extern.testing` shape", () => {
     },
   );
 
-  describe('with `scope: "sync"`', async () => {
+  describe('with `scope: "sync"`', () => {
     it("allows a sync body nested in a second instance's testing block", async () => {
-      const outer = await initialize({ scope: "sync" });
-      const inner = await initialize({ scope: "sync" });
+      const outer = initialize({ scope: "sync" });
+      const inner = initialize({ scope: "sync" });
       let seen = false;
 
       outer.testing(() => {
@@ -81,13 +78,13 @@ describe("`extern.testing` shape", () => {
     });
 
     it("throws when nesting `testing` on the same instance", async () => {
-      const extern = await initialize({ scope: "sync" });
+      const extern = initialize({ scope: "sync" });
 
       expect(() => {
         extern.testing(() => {
           extern.testing(() => {});
         });
-      }).toThrowError(IllegalConcurrencyTestingError);
+      }).toThrowError(ExternError.IllegalConcurrencyTestingError);
     });
   });
 });

@@ -1,9 +1,9 @@
-import { describe, expect, expectTypeOf, it } from "bun:test";
+import { describe, expect, expectTypeOf, it } from "./index.ts";
 import * as S from "sury";
 import { initialize } from "../src/index.ts";
 
-describe("`extern.typed`", async () => {
-  const extern = await initialize();
+describe("`extern.typed`", () => {
+  const extern = initialize();
 
   describe("`by()`", () => {
     const schema = S.number;

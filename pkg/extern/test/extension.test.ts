@@ -1,12 +1,7 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import * as S from "sury";
 import { initialize } from "../src/index.ts";
-import {
-  AmbiguousIdentityError,
-  ExtensionUnavailableError,
-  NotMockedError,
-  UnusedMocksError,
-} from "../src/Error.ts";
+import { ExternError } from "../src/Error.ts";
 import { isThenable } from "../src/Util.ts";
 import {
   boxed,
@@ -22,7 +17,7 @@ import {
 describe("an extension", () => {
   describe("an unmocked block whose identity it claims", () => {
     it("produces a value instead of throwing", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing(() => {
@@ -31,30 +26,30 @@ describe("an extension", () => {
     });
 
     it('still throws when the extension opts out with `unmocked: "error"`', async () => {
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [boxedExtension({ unmocked: "error" })],
       });
       const schema = boxed<string>("a");
 
       await extern.testing(() => {
         expect(() => extern.typed.by(schema).will(() => "x")).toThrowError(
-          NotMockedError,
+          ExternError.NotMockedError,
         );
       });
     });
 
     it("throws for an identity no extension claims", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
 
       await extern.testing(() => {
         expect(() => extern.typed.by(S.string).will(() => "x")).toThrowError(
-          NotMockedError,
+          ExternError.NotMockedError,
         );
       });
     });
 
     it("is not consulted at all outside a testing block", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       expect(extern.typed.by(schema).will(() => "original")).toBe("original");
@@ -63,7 +58,7 @@ describe("an extension", () => {
 
   describe("the per-block production cache", () => {
     it("makes reading the same block twice in one test agree", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing(() => {
@@ -80,7 +75,7 @@ describe("an extension", () => {
      * paths that must not share a value.
      */
     it("keeps differently-named blocks over one identity distinct", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing(() => {
@@ -100,7 +95,7 @@ describe("an extension", () => {
     });
 
     it("keeps separate identities distinct within one block", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
 
       await extern.testing(() => {
         const a = extern.typed.by(boxed<string>("a")).will(() => "x");
@@ -111,7 +106,7 @@ describe("an extension", () => {
     });
 
     it("does not leak across testing blocks", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
       const seen: string[] = [];
 
@@ -129,7 +124,7 @@ describe("an extension", () => {
 
   describe("`produce()`", () => {
     it("produces the same value the unmocked path would", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       let observed = "";
@@ -148,7 +143,7 @@ describe("an extension", () => {
     });
 
     it("hands back a spy that records the produced value", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing((mock) => {
@@ -162,17 +157,17 @@ describe("an extension", () => {
     });
 
     it("counts as unused when the block never runs", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
 
       expect(() =>
         extern.testing((mock) => {
           mock(boxed<string>("a")).produce();
         }),
-      ).toThrowError(UnusedMocksError);
+      ).toThrowError(ExternError.UnusedMocksError);
     });
 
     it("is overridden by an explicit `with()`", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing((mock) => {
@@ -183,7 +178,7 @@ describe("an extension", () => {
     });
 
     it("throws `ExtensionUnavailableError` with no extension configured", async () => {
-      const extern = await initialize();
+      const extern = initialize();
       const schema = boxed<string>("a");
 
       await extern.testing((mock) => {
@@ -196,14 +191,14 @@ describe("an extension", () => {
 
         expect(() =>
           extern.typed.by(schema as never).will(() => "x"),
-        ).toThrowError(ExtensionUnavailableError);
+        ).toThrowError(ExternError.ExtensionUnavailableError);
       });
     });
   });
 
   describe("`produce(fn)`", () => {
     it("hands the callback the extension's own handle", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing((mock) => {
@@ -220,7 +215,7 @@ describe("an extension", () => {
      * _modification_ of a production rather than a separate one.
      */
     it("agrees with `produce()` when the callback shapes nothing", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       let shaped = "";
@@ -240,7 +235,7 @@ describe("an extension", () => {
     });
 
     it("records the shaped value as the execution's outcome", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing((mock) => {
@@ -257,7 +252,7 @@ describe("an extension", () => {
     });
 
     it("accepts options after the callback", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
 
       /**
        * Resolves without the block ever running, which is the whole point: the
@@ -272,7 +267,7 @@ describe("an extension", () => {
     });
 
     it("is available under `named(...)`, and sees the name in the handle", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing((mock) => {
@@ -290,7 +285,7 @@ describe("an extension", () => {
     });
 
     it("is overridden by an explicit `with()`", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing((mock) => {
@@ -301,7 +296,7 @@ describe("an extension", () => {
     });
 
     it("rethrows what the callback throws, and still counts as used", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
       const boom = new Error("boom");
 
@@ -331,7 +326,7 @@ describe("an extension", () => {
    */
   describe("the production cache", () => {
     it("makes two reads of a `produce()`d block agree", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       await extern.testing((mock) => {
@@ -345,7 +340,7 @@ describe("an extension", () => {
     });
 
     it("makes two reads of a `produce(fn)`d block agree, running it once", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       let calls = 0;
@@ -369,7 +364,7 @@ describe("an extension", () => {
      * over one identity are separate entries and each callback runs.
      */
     it("keys on the name, not on the identity alone", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       const schema = boxed<string>("a");
 
       let calls = 0;
@@ -400,7 +395,7 @@ describe("an extension", () => {
 
   describe("`Execution.outcome`", () => {
     it("records what a substituted block returned", async () => {
-      const extern = await initialize();
+      const extern = initialize();
       const schema = S.string;
 
       await extern.testing((mock) => {
@@ -420,7 +415,7 @@ describe("an extension", () => {
      * Without this the block would count as unused despite plainly running.
      */
     it("records a throw, rethrows it, and still counts the mock as used", async () => {
-      const extern = await initialize();
+      const extern = initialize();
       const schema = S.string;
       const boom = new Error("boom");
 
@@ -445,7 +440,7 @@ describe("an extension", () => {
   describe("the scope opened for an extension", () => {
     it("opens the extension scope exactly once per testing block", async () => {
       const seen = opened();
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [boxedExtension({ opened: seen })],
       });
 
@@ -457,7 +452,7 @@ describe("an extension", () => {
 
     it("opens no extension scope when none was configured", async () => {
       const seen = opened();
-      const extern = await initialize();
+      const extern = initialize();
 
       await extern.testing(() => {});
 
@@ -465,7 +460,7 @@ describe("an extension", () => {
     });
 
     it("returns a sync body synchronously, adding no promise of its own", async () => {
-      const extern = await initialize({ extensions: [boxedExtension()] });
+      const extern = initialize({ extensions: [boxedExtension()] });
       let seen = false;
 
       const result = extern.testing(() => {
@@ -486,7 +481,7 @@ describe("an extension", () => {
   describe("an observer extension", () => {
     it("still has its scope opened once per testing block", async () => {
       const seen = opened();
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [observerExtension({ opened: seen })],
       });
 
@@ -497,17 +492,17 @@ describe("an extension", () => {
     });
 
     it("claims no identities, so unmocked blocks still throw", async () => {
-      const extern = await initialize({ extensions: [observerExtension()] });
+      const extern = initialize({ extensions: [observerExtension()] });
 
       await extern.testing(() => {
         expect(() => extern.typed.by(S.string).will(() => "x")).toThrowError(
-          NotMockedError,
+          ExternError.NotMockedError,
         );
       });
     });
 
     it("leaves ordinary mocking untouched", async () => {
-      const extern = await initialize({ extensions: [observerExtension()] });
+      const extern = initialize({ extensions: [observerExtension()] });
 
       await extern.testing((mock) => {
         mock(S.string).with("v");
@@ -518,7 +513,7 @@ describe("an extension", () => {
 
     it("coexists with a producing extension", async () => {
       const seen = opened();
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [
           observerExtension({ opened: seen }),
           boxedExtension({ opened: seen }),
@@ -542,19 +537,19 @@ describe("an extension", () => {
      * than as a call on `undefined`.
      */
     it("fails loudly rather than calling `undefined`", async () => {
-      const extern = await initialize({ extensions: [brokenExtension()] });
+      const extern = initialize({ extensions: [brokenExtension()] });
 
       await extern.testing(() => {
         expect(() =>
           extern.typed.by(boxed<string>("a")).will(() => "x"),
-        ).toThrowError(ExtensionUnavailableError);
+        ).toThrowError(ExternError.ExtensionUnavailableError);
       });
     });
   });
 
   describe("several extensions at once", () => {
     it("routes each identity to the extension that claims it", async () => {
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [boxedExtension(), taggedExtension()],
       });
 
@@ -570,7 +565,7 @@ describe("an extension", () => {
 
     it("opens every scope, in the order they were configured", async () => {
       const seen = opened();
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [
           boxedExtension({ opened: seen }),
           taggedExtension({ opened: seen }),
@@ -590,19 +585,19 @@ describe("an extension", () => {
      * handed.
      */
     it("refuses an identity two extensions both claim", async () => {
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [boxedExtension(), greedyExtension()],
       });
 
       await extern.testing(() => {
         expect(() =>
           extern.typed.by(boxed<string>("a")).will(() => "x"),
-        ).toThrowError(AmbiguousIdentityError);
+        ).toThrowError(ExternError.AmbiguousIdentityError);
       });
     });
 
     it("names both extensions in the ambiguity error", async () => {
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [boxedExtension(), greedyExtension()],
       });
 
@@ -611,10 +606,9 @@ describe("an extension", () => {
           extern.typed.by(boxed<string>("a")).will(() => "x");
           expect.unreachable();
         } catch (error) {
-          expect((error as AmbiguousIdentityError).extensions).toEqual([
-            "boxed",
-            "greedy",
-          ]);
+          expect(
+            (error as ExternError.AmbiguousIdentityError).extensions,
+          ).toEqual(["boxed", "greedy"]);
         }
       });
     });

@@ -1,7 +1,7 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import * as S from "sury";
 import { initialize } from "../src/index.ts";
-import { CleanupFailedError } from "../src/Error.ts";
+import { ExternError } from "../src/Error.ts";
 import type { Extension } from "../src/Extension.ts";
 import { isThenable } from "../src/Util.ts";
 import { boxed, type BoxedLambda } from "./fixtures/extension.ts";
@@ -41,7 +41,7 @@ describe("frame teardown", () => {
   describe("a synchronous body", () => {
     it("stays synchronous, and tears down at the body's end", async () => {
       const log: string[] = [];
-      const extern = await initialize({ extensions: [observer(log, "a")] });
+      const extern = initialize({ extensions: [observer(log, "a")] });
 
       const result = extern.testing(() => void log.push("body"));
 
@@ -51,7 +51,7 @@ describe("frame teardown", () => {
 
     it("passes the body's return value through untouched", async () => {
       const sentinel = { ok: true };
-      const extern = await initialize({ extensions: [observer([], "a")] });
+      const extern = initialize({ extensions: [observer([], "a")] });
 
       expect(extern.testing(() => sentinel)).toBe(sentinel);
     });
@@ -64,7 +64,7 @@ describe("frame teardown", () => {
   describe("an asynchronous body", () => {
     it("tears down at settlement, not at the first `await`", async () => {
       const log: string[] = [];
-      const extern = await initialize({ extensions: [observer(log, "a")] });
+      const extern = initialize({ extensions: [observer(log, "a")] });
 
       await extern.testing(async () => {
         log.push("body:before");
@@ -84,7 +84,7 @@ describe("frame teardown", () => {
   describe("across several extensions", () => {
     it("tears down inner-first, with no coordination between them", async () => {
       const log: string[] = [];
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [observer(log, "outer"), observer(log, "inner")],
       });
 
@@ -104,7 +104,7 @@ describe("frame teardown", () => {
 
     it("runs an outer cleanup only once an inner async one has settled", async () => {
       const log: string[] = [];
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [slowObserver(log, "outer"), slowObserver(log, "inner")],
       });
 
@@ -118,7 +118,7 @@ describe("frame teardown", () => {
     it("reports the failure to every cleanup and rethrows it", async () => {
       const log: string[] = [];
       const boom = new Error("boom");
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [observer(log, "outer"), observer(log, "inner")],
       });
 
@@ -152,11 +152,11 @@ describe("frame teardown", () => {
 
     it("propagates the failure when the body succeeded", async () => {
       const teardown = new Error("teardown");
-      const extern = await initialize({
-        extensions: [throwing("a", teardown)],
-      });
+      const extern = initialize({ extensions: [throwing("a", teardown)] });
 
-      expect(() => extern.testing(() => {})).toThrowError(CleanupFailedError);
+      expect(() => extern.testing(() => {})).toThrowError(
+        ExternError.CleanupFailedError,
+      );
     });
 
     /**
@@ -166,7 +166,7 @@ describe("frame teardown", () => {
     it("collects failures from separate scopes into one error", async () => {
       const outerError = new Error("outer teardown");
       const innerError = new Error("inner teardown");
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [
           throwing("outer", outerError),
           throwing("inner", innerError),
@@ -177,8 +177,8 @@ describe("frame teardown", () => {
         extern.testing(() => {});
         expect.unreachable();
       } catch (thrown) {
-        expect(thrown).toBeInstanceOf(CleanupFailedError);
-        expect((thrown as CleanupFailedError).errors).toEqual([
+        expect(thrown).toBeInstanceOf(ExternError.CleanupFailedError);
+        expect((thrown as ExternError.CleanupFailedError).errors).toEqual([
           innerError,
           outerError,
         ]);
@@ -191,7 +191,7 @@ describe("frame teardown", () => {
      */
     it("keeps the body's error when the body also failed", async () => {
       const body = new Error("the-real-failure");
-      const extern = await initialize({
+      const extern = initialize({
         extensions: [throwing("a", new Error("teardown-noise"))],
       });
 
@@ -223,7 +223,7 @@ describe("frame teardown", () => {
 
     it("produces values and still tears down at settlement", async () => {
       const log: string[] = [];
-      const extern = await initialize({ extensions: [producing(log)] });
+      const extern = initialize({ extensions: [producing(log)] });
       const schema = boxed<string>("a");
 
       await extern.testing(async () => {
@@ -238,7 +238,7 @@ describe("frame teardown", () => {
   describe("alongside extern's own checks", () => {
     it("settles every cleanup before the unused-mock check fires", async () => {
       const log: string[] = [];
-      const extern = await initialize({ extensions: [observer(log, "a")] });
+      const extern = initialize({ extensions: [observer(log, "a")] });
 
       expect(() =>
         extern.testing((mock) => {
@@ -258,7 +258,7 @@ describe("frame teardown", () => {
         },
       };
       const boom = new Error("boom");
-      const extern = await initialize({ extensions: [bare] });
+      const extern = initialize({ extensions: [bare] });
 
       expect(() =>
         extern.testing(() => {

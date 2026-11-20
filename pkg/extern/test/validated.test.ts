@@ -1,10 +1,10 @@
-import { describe, expect, expectTypeOf, it } from "bun:test";
+import { describe, expect, expectTypeOf, it } from "./index.ts";
 import * as S from "sury";
 import { initialize } from "../src/index.ts";
-import { InvalidDataTypeError, InvalidSchemaError } from "../src/Error.ts";
+import { ExternError } from "../src/Error.ts";
 
-describe("`extern.validated`", async () => {
-  const extern = await initialize();
+describe("`extern.validated`", () => {
+  const extern = initialize();
 
   describe("`by()`", () => {
     const schema = S.number;
@@ -32,7 +32,9 @@ describe("`extern.validated`", async () => {
           const result = extern.validated.by(schema).will(async () => value);
 
           expectTypeOf<typeof result>().toEqualTypeOf<Promise<{}>>();
-          await expect(result).rejects.toThrowError(InvalidDataTypeError);
+          await expect(result).rejects.toThrowError(
+            ExternError.InvalidDataTypeError,
+          );
         });
       });
 
@@ -45,7 +47,9 @@ describe("`extern.validated`", async () => {
           const result = extern.validated.by(schema).will(async () => value);
 
           expectTypeOf<typeof result>().toEqualTypeOf<Promise<{}>>();
-          await expect(result).rejects.toThrowError(InvalidDataTypeError);
+          await expect(result).rejects.toThrowError(
+            ExternError.InvalidDataTypeError,
+          );
         });
       });
     });
@@ -59,7 +63,10 @@ describe("`extern.validated`", async () => {
         );
 
         const { issues } = await schema["~standard"].validate("abc");
-        const error = new InvalidDataTypeError(schema, issues ?? []);
+        const error = new ExternError.InvalidDataTypeError(
+          schema,
+          issues ?? [],
+        );
 
         await expect(result).rejects.toThrowError(error);
       });
@@ -103,7 +110,10 @@ describe("`extern.validated`", async () => {
           );
 
           const { issues } = await schema["~standard"].validate("abc");
-          const error = new InvalidDataTypeError(schema, issues ?? []);
+          const error = new ExternError.InvalidDataTypeError(
+            schema,
+            issues ?? [],
+          );
 
           await expect(result).rejects.toThrowError(error);
         });
@@ -150,7 +160,10 @@ describe("`extern.validated`", async () => {
             );
 
             const { issues } = await schema["~standard"].validate("abc");
-            const error = new InvalidDataTypeError(schema, issues ?? []);
+            const error = new ExternError.InvalidDataTypeError(
+              schema,
+              issues ?? [],
+            );
 
             await expect(result).rejects.toThrowError(error);
           });
@@ -231,7 +244,7 @@ describe("`extern.validated`", async () => {
             /* @ts-expect-error */
             t,
           ),
-        ).toThrowError(InvalidSchemaError);
+        ).toThrowError(ExternError.InvalidSchemaError);
       });
     });
   });

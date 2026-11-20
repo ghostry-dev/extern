@@ -1,18 +1,14 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "../index.ts";
 import * as S from "sury";
 import { initialize, type Initialized } from "../../src/index.ts";
-import {
-  IllegalConcurrencyTestingError,
-  NotMockedError,
-  UnusedMocksError,
-} from "../../src/Error.ts";
+import { ExternError } from "../../src/Error.ts";
 
-describe("`extern.testing`", async () => {
-  const extern = await initialize();
+describe("`extern.testing`", () => {
+  const extern = initialize();
 
   const schema = S.number;
 
-  describe("for `extern.validated`", async () => {
+  describe("for `extern.validated`", () => {
     const example = (extern: Initialized) => {
       return extern.validated.by(schema).will(() => 123);
     };
@@ -27,7 +23,9 @@ describe("`extern.testing`", async () => {
 
     it("requires `extern` during execution to be mocked", async () => {
       await extern.testing(async () => {
-        expect(example(extern)).rejects.toThrowError(NotMockedError);
+        expect(example(extern)).rejects.toThrowError(
+          ExternError.NotMockedError,
+        );
       });
     });
 
@@ -36,7 +34,7 @@ describe("`extern.testing`", async () => {
         extern.testing((mock) => {
           mock(schema).with(987);
         }),
-      ).toThrowError(UnusedMocksError);
+      ).toThrowError(ExternError.UnusedMocksError);
     });
 
     describe("with options", () => {
@@ -73,8 +71,8 @@ describe("`extern.testing`", async () => {
     });
 
     describe("race condition", () => {
-      describe("using `async` scope", async () => {
-        const extern = await initialize({ scope: "async" });
+      describe("using `async` scope", () => {
+        const extern = initialize({ scope: "async" });
 
         it("provides the correct mocking data in each block", async () => {
           let unblock = () => {};
@@ -96,8 +94,8 @@ describe("`extern.testing`", async () => {
         });
       });
 
-      describe("using `sync` scope", async () => {
-        const extern = await initialize({ scope: "sync" });
+      describe("using `sync` scope", () => {
+        const extern = initialize({ scope: "sync" });
 
         it("throws a concurrency error", async () => {
           let unblock = () => {};
@@ -115,7 +113,7 @@ describe("`extern.testing`", async () => {
               unblock();
               expect(await example(extern)).toBe(777);
             }),
-          ).toThrowError(IllegalConcurrencyTestingError);
+          ).toThrowError(ExternError.IllegalConcurrencyTestingError);
 
           unblock();
           await first;

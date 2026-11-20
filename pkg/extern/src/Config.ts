@@ -1,5 +1,5 @@
 import { toScope as resolvedScope } from "#scope";
-import { AsyncScopeUnavailableError } from "./Error.ts";
+import { ExternError } from "./Error.ts";
 import { compose, type Extension, type Extensions } from "./Extension.ts";
 import type { Scope } from "./Scope.ts";
 import { toScope as syncScope } from "./Scope/Sync.ts";
@@ -19,8 +19,9 @@ export interface Configuration<
    * concurrent `testing` blocks. Anywhere else resolves to the synchronous
    * carrier.
    *
-   * `async` demands that carrier and throws {@link AsyncScopeUnavailableError}
-   * when this runtime resolved to the synchronous one.
+   * `async` demands that carrier and throws
+   * {@link ExternError.AsyncScopeUnavailableError} when this runtime resolved
+   * to the synchronous one.
    *
    * `sync` forces the synchronous carrier. It has no execution-environment
    * requirements, and it prevents tests using `extern.testing` from running
@@ -66,7 +67,8 @@ const $scope = (configuration: Configuration): Scope => {
     case "async": {
       const scope = resolvedScope();
 
-      if (!scope.asynchronous) throw new AsyncScopeUnavailableError();
+      if (!scope.asynchronous)
+        throw new ExternError.AsyncScopeUnavailableError();
 
       return scope;
     }

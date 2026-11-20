@@ -1,5 +1,5 @@
 import { withCleanup } from "./Cleanup.ts";
-import { AmbiguousIdentityError, ExtensionUnavailableError } from "./Error.ts";
+import { ExternError } from "./Error.ts";
 import { enterFrame, type Frame, type Opened } from "./Frame.ts";
 import { isThenable } from "./Util.ts";
 
@@ -301,7 +301,9 @@ export const compose = (extensions: readonly Extension.Any[]): Extensions => {
     );
 
     if (claimants.length > 1) {
-      throw new AmbiguousIdentityError(claimants.map((e) => e.name));
+      throw new ExternError.AmbiguousIdentityError(
+        claimants.map((e) => e.name),
+      );
     }
 
     return claimants[0];
@@ -357,7 +359,7 @@ export const compose = (extensions: readonly Extension.Any[]): Extensions => {
            * exactly that reason.
            */
           if (match?.session.produce === undefined) {
-            throw new ExtensionUnavailableError();
+            throw new ExternError.ExtensionUnavailableError();
           }
 
           return match.session.produce(identity, named, using);

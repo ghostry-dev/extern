@@ -1,6 +1,6 @@
 import type { Config } from "../Config.ts";
 import type { Context } from "../Context.ts";
-import { UnusedMocksError } from "../Error.ts";
+import { ExternError } from "../Error.ts";
 import type { TypeLambda } from "../Extension.ts";
 import { mocking, type Mocker } from "../Mocking.ts";
 import type { IdentityMap, Spy } from "../Spy.ts";
@@ -74,6 +74,6 @@ const disallowUnusedMocks = (spyMap: IdentityMap) => {
   spyMap.forEach((spies) => spies.forEach(check));
 
   if (unused.length > 0) {
-    throw new UnusedMocksError(unused);
+    throw new ExternError.UnusedMocksError(unused);
   }
 };

@@ -1,4 +1,4 @@
-import { CleanupFailedError } from "./Error.ts";
+import { ExternError } from "./Error.ts";
 import { isThenable } from "./Util.ts";
 
 /**
@@ -31,7 +31,7 @@ export type Cleanup = (outcome: Outcome) => void | PromiseLike<void>;
 const report = (errors: readonly unknown[], outcome: Outcome): void => {
   if (errors.length === 0) return;
 
-  const failure = new CleanupFailedError(errors);
+  const failure = new ExternError.CleanupFailedError(errors);
 
   console.error(failure);
 

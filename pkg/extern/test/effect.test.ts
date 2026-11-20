@@ -1,9 +1,9 @@
-import { describe, expect, expectTypeOf, it } from "bun:test";
+import { describe, expect, expectTypeOf, it } from "./index.ts";
 import { initialize } from "../src/index.ts";
 import type { Promisable } from "../src/Types.ts";
 
-describe("`extern.effect`", async () => {
-  const extern = await initialize();
+describe("`extern.effect`", () => {
+  const extern = initialize();
 
   describe("`will()`", () => {
     const subject = extern.effect;

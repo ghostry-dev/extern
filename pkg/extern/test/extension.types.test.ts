@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import * as S from "sury";
 import { initialize, type Initialized } from "../src/index.ts";
 import type {
@@ -89,7 +89,7 @@ describe("the extension type mechanism", () => {
 
 describe("`initialize`", () => {
   it("infers the lambda union from the extension values, with no type argument", async () => {
-    const extern = await initialize({
+    const extern = initialize({
       extensions: [boxedExtension(), taggedExtension()],
     });
 
@@ -101,7 +101,7 @@ describe("`initialize`", () => {
   });
 
   it("infers a single lambda from a single extension", async () => {
-    const extern = await initialize({ extensions: [boxedExtension()] });
+    const extern = initialize({ extensions: [boxedExtension()] });
 
     assertType<Equals<typeof extern, Initialized<BoxedLambda>>>();
 
@@ -109,8 +109,8 @@ describe("`initialize`", () => {
   });
 
   it("resolves to `never` with no extensions, and with an empty list", async () => {
-    const bare = await initialize();
-    const empty = await initialize({ extensions: [] });
+    const bare = initialize();
+    const empty = initialize({ extensions: [] });
 
     assertType<Equals<typeof bare, Initialized<never>>>();
     assertType<Equals<typeof empty, Initialized<never>>>();
@@ -122,8 +122,8 @@ describe("`initialize`", () => {
 
 describe("an extension that contributes no identities", () => {
   it("leaves the lambda union untouched", async () => {
-    const alone = await initialize({ extensions: [observerExtension()] });
-    const beside = await initialize({
+    const alone = initialize({ extensions: [observerExtension()] });
+    const beside = initialize({
       extensions: [observerExtension(), boxedExtension()],
     });
 
@@ -134,7 +134,7 @@ describe("an extension that contributes no identities", () => {
   });
 
   it("offers no `produce()` anywhere", async () => {
-    const extern = await initialize({ extensions: [observerExtension()] });
+    const extern = initialize({ extensions: [observerExtension()] });
 
     await extern.testing((mock) => {
       const spyable = mock(S.string);
@@ -148,12 +148,12 @@ describe("an extension that contributes no identities", () => {
   });
 });
 
-describe("`typed.by`", async () => {
-  const extern = await initialize({
+describe("`typed.by`", () => {
+  const extern = initialize({
     extensions: [boxedExtension(), taggedExtension()],
   });
 
-  const bare = await initialize();
+  const bare = initialize();
 
   it("infers the produced type from an extension identity", () => {
     const result = extern.typed
@@ -210,9 +210,9 @@ describe("`typed.by`", async () => {
   });
 });
 
-describe("the `produce()` gate", async () => {
-  const extern = await initialize({ extensions: [boxedExtension()] });
-  const bare = await initialize();
+describe("the `produce()` gate", () => {
+  const extern = initialize({ extensions: [boxedExtension()] });
+  const bare = initialize();
 
   it("offers `produce()` for an extension identity, top level and under `named`", async () => {
     await extern.testing((mock) => {
@@ -323,18 +323,18 @@ describe("`HandleOf`", () => {
   });
 });
 
-describe("the `produce(fn)` gate", async () => {
-  const extern = await initialize({ extensions: [boxedExtension()] });
+describe("the `produce(fn)` gate", () => {
+  const extern = initialize({ extensions: [boxedExtension()] });
 
-  const mixed = await initialize({
+  const mixed = initialize({
     extensions: [boxedExtension(), taggedExtension()],
   });
 
-  const beside = await initialize({
+  const beside = initialize({
     extensions: [observerExtension(), boxedExtension()],
   });
 
-  const handleless = await initialize({ extensions: [taggedExtension()] });
+  const handleless = initialize({ extensions: [taggedExtension()] });
 
   it("types `via` as the extension's own handle", async () => {
     await extern.testing((mock) => {
@@ -569,7 +569,7 @@ describe("the `Extension` union", () => {
    * path, not the common one.
    */
   it("contextually types an inline extension given a contextual type", async () => {
-    const extern = await initialize({
+    const extern = initialize({
       extensions: [
         {
           kind: "observer",

@@ -1,5 +1,5 @@
 import type { Config } from "../Config.ts";
-import { InvalidDataTypeError, NotMockedError } from "../Error.ts";
+import { ExternError } from "../Error.ts";
 import { approximately } from "../Mocking.ts";
 import { produce } from "../Production.ts";
 import type { Execution } from "../Spy.ts";
@@ -20,7 +20,8 @@ export const will = async <$Out, $In>(
    */
   if (!context) {
     const result = await schema["~standard"].validate(await fn());
-    if (result.issues) throw new InvalidDataTypeError(schema, result.issues);
+    if (result.issues)
+      throw new ExternError.InvalidDataTypeError(schema, result.issues);
     return result.value;
   }
 
@@ -32,7 +33,7 @@ export const will = async <$Out, $In>(
    * signature to accept. A `produce()` mock is still reachable through a plain
    * JavaScript caller, so the strategy is still dispatched below.
    */
-  if (!spy) throw new NotMockedError();
+  if (!spy) throw new ExternError.NotMockedError();
 
   const record = (outcome: Execution.Outcome): void => {
     spy.executions.push({ ...params, mode: "validated", outcome });

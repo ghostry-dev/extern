@@ -1,5 +1,5 @@
 import type { Context } from "../Context.ts";
-import { IllegalConcurrencyTestingError } from "../Error.ts";
+import { ExternError } from "../Error.ts";
 import type { Scope } from "../Scope.ts";
 import { isThenable } from "../Util.ts";
 
@@ -13,10 +13,10 @@ import { isThenable } from "../Util.ts";
  * practice a browser bundle.
  *
  * One shared slot cannot represent two overlapping blocks, which is why `run`
- * throws {@link IllegalConcurrencyTestingError} when one is already open. An
- * async body is still accepted: the context stays until the returned promise
- * settles, and a second block started during that wait is the overlap that this
- * carrier refuses.
+ * throws {@link ExternError.IllegalConcurrencyTestingError} when one is already
+ * open. An async body is still accepted: the context stays until the returned
+ * promise settles, and a second block started during that wait is the overlap
+ * that this carrier refuses.
  */
 export const toScope = (): Scope => new SyncScope();
 
@@ -40,7 +40,7 @@ class SyncScope implements Scope {
      * abandoned.
      */
     if (this.context !== undefined) {
-      throw new IllegalConcurrencyTestingError();
+      throw new ExternError.IllegalConcurrencyTestingError();
     }
 
     this.context = context;

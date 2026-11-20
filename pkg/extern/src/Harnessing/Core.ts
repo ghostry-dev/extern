@@ -1,4 +1,4 @@
-import { MockingUnavailableError } from "../Error.ts";
+import { ExternError } from "../Error.ts";
 import type { TypeLambda } from "../Extension.ts";
 import type { Initialized } from "../index.ts";
 import { augmentFunction } from "../Util.ts";
@@ -10,7 +10,7 @@ import type {
 } from "./Types.ts";
 
 const refuse = (): never => {
-  throw new MockingUnavailableError();
+  throw new ExternError.MockingUnavailableError();
 };
 
 /**

@@ -1,5 +1,5 @@
 import type { Config } from "../../Config.ts";
-import { InvalidSchemaError } from "../../Error.ts";
+import { ExternError } from "../../Error.ts";
 import type { StandardSchemaV1 } from "../../StandardSchema.ts";
 import { given } from "./given/index.ts";
 import { named } from "./named/index.ts";
@@ -14,7 +14,7 @@ export interface By<$Out> {
 export const by =
   (config: Config) =>
   <$Out>(schema: StandardSchemaV1<$Out>): By<$Out> => {
-    if (!schema["~standard"]) throw new InvalidSchemaError();
+    if (!schema["~standard"]) throw new ExternError.InvalidSchemaError();
 
     return {
       named: named<$Out>(config, schema),

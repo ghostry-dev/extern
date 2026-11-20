@@ -1,12 +1,7 @@
-import { describe, expect, it, spyOn } from "bun:test";
+import { describe, expect, it, spyOn } from "./index.ts";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { initialize } from "../src/index.ts";
-import {
-  CleanupFailedError,
-  ExtensionFrameResultError,
-  ExtensionFrameSessionError,
-  ExtensionFrameYieldError,
-} from "../src/Error.ts";
+import { ExternError } from "../src/Error.ts";
 import type { Extension } from "../src/Extension.ts";
 
 /**
@@ -58,7 +53,7 @@ describe("trap 1: the extension's own setup throws", () => {
 
   it("releases what it acquired", async () => {
     const p = pool();
-    const extern = await initialize({ extensions: [leaky(p)] });
+    const extern = initialize({ extensions: [leaky(p)] });
 
     expect(() => extern.testing(() => {})).toThrowError("setup failed");
 
@@ -89,7 +84,7 @@ describe("trap 2: teardown written as a bracket around the body", () => {
 
   it("closes after a synchronous body", async () => {
     const log: string[] = [];
-    const extern = await initialize({ extensions: [bracketing(log)] });
+    const extern = initialize({ extensions: [bracketing(log)] });
 
     extern.testing(() => void log.push("body"));
 
@@ -98,7 +93,7 @@ describe("trap 2: teardown written as a bracket around the body", () => {
 
   it("closes after an asynchronous body", async () => {
     const log: string[] = [];
-    const extern = await initialize({ extensions: [bracketing(log)] });
+    const extern = initialize({ extensions: [bracketing(log)] });
 
     await extern.testing(async () => {
       await Promise.resolve();
@@ -111,7 +106,7 @@ describe("trap 2: teardown written as a bracket around the body", () => {
   /** A failing body still reaches the `finally`, and its error still wins. */
   it("closes after a failing body, without displacing its error", async () => {
     const log: string[] = [];
-    const extern = await initialize({ extensions: [bracketing(log)] });
+    const extern = initialize({ extensions: [bracketing(log)] });
 
     expect(() =>
       extern.testing(() => {
@@ -149,7 +144,7 @@ describe("a wrapper's scope reaches its own teardown", () => {
 
   it("sees the scope in teardown after an async body", async () => {
     const seen: string[] = [];
-    const extern = await initialize({ extensions: [scoped(seen)] });
+    const extern = initialize({ extensions: [scoped(seen)] });
 
     await extern.testing(async () => {
       await Promise.resolve();
@@ -166,17 +161,17 @@ describe("the frame guards", () => {
     ({ kind: "observer", name: "malformed", frame }) as unknown as Extension;
 
   it("refuses a `frame` that is not a generator", async () => {
-    const extern = await initialize({
+    const extern = initialize({
       extensions: [malformed(() => ({ produce: () => 1 }))],
     });
 
     expect(() => extern.testing(() => {})).toThrowError(
-      ExtensionFrameResultError,
+      ExternError.ExtensionFrameResultError,
     );
   });
 
   it("refuses a `yield` carrying neither a session nor a wrapper", async () => {
-    const extern = await initialize({
+    const extern = initialize({
       extensions: [
         malformed(function* () {
           yield 42;
@@ -185,17 +180,15 @@ describe("the frame guards", () => {
     });
 
     expect(() => extern.testing(() => {})).toThrowError(
-      ExtensionFrameSessionError,
+      ExternError.ExtensionFrameSessionError,
     );
   });
 
   it("refuses a frame that never yields", async () => {
-    const extern = await initialize({
-      extensions: [malformed(function* () {})],
-    });
+    const extern = initialize({ extensions: [malformed(function* () {})] });
 
     expect(() => extern.testing(() => {})).toThrowError(
-      ExtensionFrameYieldError,
+      ExternError.ExtensionFrameYieldError,
     );
   });
 
@@ -205,7 +198,7 @@ describe("the frame guards", () => {
    * any other. The guard still fires; it is simply wrapped.
    */
   it("refuses a second `yield`, as a teardown fault", async () => {
-    const extern = await initialize({
+    const extern = initialize({
       extensions: [
         malformed(function* () {
           yield {};
@@ -221,10 +214,12 @@ describe("the frame guards", () => {
       extern.testing(() => {});
       throw new Error("expected a cleanup failure");
     } catch (thrown) {
-      expect(thrown).toBeInstanceOf(CleanupFailedError);
-      if (thrown instanceof CleanupFailedError) {
+      expect(thrown).toBeInstanceOf(ExternError.CleanupFailedError);
+      if (thrown instanceof ExternError.CleanupFailedError) {
         expect(thrown.errors).toHaveLength(1);
-        expect(thrown.errors[0]).toBeInstanceOf(ExtensionFrameYieldError);
+        expect(thrown.errors[0]).toBeInstanceOf(
+          ExternError.ExtensionFrameYieldError,
+        );
       }
     } finally {
       error.mockRestore();

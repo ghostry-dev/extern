@@ -1,9 +1,5 @@
 import type { Cleanup, Outcome } from "./Cleanup.ts";
-import {
-  ExtensionFrameResultError,
-  ExtensionFrameSessionError,
-  ExtensionFrameYieldError,
-} from "./Error.ts";
+import { ExternError } from "./Error.ts";
 import type { Session } from "./Extension.ts";
 import { isThenable } from "./Util.ts";
 
@@ -101,16 +97,17 @@ export const openFrame = (
      * frame may legitimately bracket without wrapping, because context comes
      * from a separate `provides` — a yield here is the only channel.
      */
-    if (step.done === true) throw new ExtensionFrameYieldError(name);
+    if (step.done === true)
+      throw new ExternError.ExtensionFrameYieldError(name);
 
     const yielded = step.value;
 
     if (typeof yielded !== "function" && typeof yielded !== "object") {
-      throw new ExtensionFrameSessionError(name, typeof yielded);
+      throw new ExternError.ExtensionFrameSessionError(name, typeof yielded);
     }
 
     if (yielded === null) {
-      throw new ExtensionFrameSessionError(name, "null");
+      throw new ExternError.ExtensionFrameSessionError(name, "null");
     }
 
     const wrapper: Wrapper =
@@ -120,7 +117,8 @@ export const openFrame = (
       wrapper,
       cleanup: (outcome) => {
         const finished = (last: IteratorResult<unknown, void>): void => {
-          if (last.done !== true) throw new ExtensionFrameYieldError(name);
+          if (last.done !== true)
+            throw new ExternError.ExtensionFrameYieldError(name);
         };
 
         const resumed = frame.next(outcome);
@@ -148,7 +146,7 @@ export const enterFrame = (
 ): Opened | PromiseLike<Opened> => {
   const result = frame();
 
-  if (!isFrame(result)) throw new ExtensionFrameResultError(name);
+  if (!isFrame(result)) throw new ExternError.ExtensionFrameResultError(name);
 
   return openFrame(result, name);
 };

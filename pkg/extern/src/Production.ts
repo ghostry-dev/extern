@@ -1,6 +1,6 @@
 import type { Config } from "./Config.ts";
 import type { Context } from "./Context.ts";
-import { ExtensionUnavailableError } from "./Error.ts";
+import { ExternError } from "./Error.ts";
 import type { AnyIdentity } from "./Types.ts";
 
 /**
@@ -46,7 +46,8 @@ export const produce = (
   named: string | undefined,
   using?: (handle: unknown) => unknown,
 ): unknown => {
-  if (context.produce === undefined) throw new ExtensionUnavailableError();
+  if (context.produce === undefined)
+    throw new ExternError.ExtensionUnavailableError();
 
   const key = named ?? "";
 

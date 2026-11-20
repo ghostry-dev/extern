@@ -2,17 +2,8 @@ import {
   initialize as initializeHarness,
   type Framework,
 } from "@ghostry/harness";
-import { describe, expect, it } from "bun:test";
-import {
-  DuplicateMockError,
-  IllegalConcurrencyTestingError,
-  initialize,
-  MockingUnavailableError,
-  NotMockedError,
-  T,
-  UnusedMocksError,
-  type Initialized,
-} from "../src/index.ts";
+import { describe, expect, it } from "./index.ts";
+import { initialize, T, type Initialized, ExternError } from "../src/index.ts";
 import { integration, type ExternTestContext } from "../src/harnessing.ts";
 
 /**
@@ -109,7 +100,7 @@ const isThenable = (value: unknown): boolean =>
 
 describe("a framed test body", () => {
   it("is a testing block, and a synchronous one stays synchronous", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     const result = runTest("mocks", ({ extern: { mock } }) => {
@@ -122,7 +113,7 @@ describe("a framed test body", () => {
   });
 
   it("awaits an async body, and checks unused mocks only once it settles", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     let settled = false;
@@ -142,7 +133,7 @@ describe("a framed test body", () => {
   });
 
   it("carries the effect mocker too, not just the value one", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     runTest("effects", ({ extern: { mock } }) => {
@@ -162,19 +153,19 @@ describe("a framed test body", () => {
    * block, so a block that previously ran its original function raises
    * instead.
    */
-  it("raises NotMockedError for a block it has no mock for", async () => {
-    const extern = await initialize({ scope: "async" });
+  it("raises ExternError.NotMockedError for a block it has no mock for", async () => {
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     expect(() => runTest("unmocked", () => block(extern))).toThrow(
-      NotMockedError,
+      ExternError.NotMockedError,
     );
   });
 });
 
 describe("isolation between tests", () => {
   it("gives each test its own spies, with no collision across them", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     const seen = (name: string, id: number) =>
@@ -187,11 +178,11 @@ describe("isolation between tests", () => {
     expect(seen("b", 2)).toEqual({ id: 2 });
 
     /** The same identity again, in a third test: a fresh map, not a duplicate. */
-    expect(() => seen("c", 3)).not.toThrow(DuplicateMockError);
+    expect(() => seen("c", 3)).not.toThrow(ExternError.DuplicateMockError);
   });
 
   it("keeps interleaved async bodies apart under the async scope", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     let release!: () => void;
@@ -223,7 +214,7 @@ describe("hooks", () => {
    * read what it recorded.
    */
   it("runs beforeEach and afterEach inside the block", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { harnessed, inSuite, runAll } = wire(extern);
 
     let executions: number | undefined;
@@ -252,7 +243,7 @@ describe("hooks", () => {
   });
 
   it("counts an unused beforeEach mock against the test, unless it is allowed", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { harnessed, inSuite, runAll } = wire(extern);
 
     inSuite("strict", () => {
@@ -263,7 +254,7 @@ describe("hooks", () => {
       harnessed.it("never reaches the block", () => {});
     });
 
-    expect(runAll).toThrow(UnusedMocksError);
+    expect(runAll).toThrow(ExternError.UnusedMocksError);
 
     const allowed = wire(extern);
 
@@ -287,7 +278,7 @@ describe("hooks", () => {
  */
 describe("suite hooks", () => {
   it("leaves blocks reached from beforeAll running their original function", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { harnessed, runSuiteHooks } = wire(extern);
 
     let value: { readonly id: number } | undefined;
@@ -302,13 +293,15 @@ describe("suite hooks", () => {
   });
 
   it("refuses the mocker on use, for both halves of it", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { harnessed, runSuiteHooks } = wire(extern);
 
     const refused: Array<unknown> = [];
 
     harnessed.beforeAll((context) => {
-      expect(() => context.extern.mock(Id)).toThrow(MockingUnavailableError);
+      expect(() => context.extern.mock(Id)).toThrow(
+        ExternError.MockingUnavailableError,
+      );
 
       /**
        * Reached through the `effect` member, which exists only because the
@@ -316,14 +309,16 @@ describe("suite hooks", () => {
        * property access rather than the error the refusal exists to raise.
        */
       expect(() => context.extern.mock.effect.named("sends")).toThrow(
-        MockingUnavailableError,
+        ExternError.MockingUnavailableError,
       );
 
       refused.push("beforeAll");
     });
 
     harnessed.afterAll((context) => {
-      expect(() => context.extern.mock(Id)).toThrow(MockingUnavailableError);
+      expect(() => context.extern.mock(Id)).toThrow(
+        ExternError.MockingUnavailableError,
+      );
       refused.push("afterAll");
     });
 
@@ -338,7 +333,7 @@ describe("suite hooks", () => {
    * not, so a throwing one would fail every suite hook in the suite.
    */
   it("runs a suite hook that never reaches for a mocker cleanly", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { harnessed, runSuiteHooks } = wire(extern);
 
     let ran = 0;
@@ -354,14 +349,14 @@ describe("suite hooks", () => {
 
 describe("errors out of a framed body", () => {
   it("reports an unused mock the body itself defined", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     expect(() =>
       runTest("unused", ({ extern: { mock } }) => {
         mock(Id).with({ id: 1 });
       }),
-    ).toThrow(UnusedMocksError);
+    ).toThrow(ExternError.UnusedMocksError);
   });
 
   /**
@@ -369,7 +364,7 @@ describe("errors out of a framed body", () => {
    * check never runs ahead of it — on either settlement path.
    */
   it("lets the body's own error through ahead of the unused-mock check", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     expect(() =>
@@ -396,13 +391,15 @@ describe("an explicit block nested inside a framed one", () => {
    * knowing before it is met in the wild.
    */
   it("shadows under the async scope rather than merging", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { runTest } = wire(extern);
 
     runTest("nested", ({ extern: { mock } }) => {
       mock(Id).with({ id: 1 });
 
-      expect(() => extern.testing(() => block(extern))).toThrow(NotMockedError);
+      expect(() => extern.testing(() => block(extern))).toThrow(
+        ExternError.NotMockedError,
+      );
 
       /** The enclosing block is intact once the inner one has closed. */
       expect(block(extern)).toEqual({ id: 1 });
@@ -410,14 +407,14 @@ describe("an explicit block nested inside a framed one", () => {
   });
 
   it("is refused outright under the sync scope", async () => {
-    const extern = await initialize({ scope: "sync" });
+    const extern = initialize({ scope: "sync" });
     const { runTest } = wire(extern);
 
     runTest("nested", ({ extern: { mock } }) => {
       mock(Id).with({ id: 1 });
 
       expect(() => extern.testing(() => undefined)).toThrow(
-        IllegalConcurrencyTestingError,
+        ExternError.IllegalConcurrencyTestingError,
       );
 
       expect(block(extern)).toEqual({ id: 1 });
@@ -430,7 +427,7 @@ describe("an explicit block nested inside a framed one", () => {
  * becomes a rule about tests rather than about explicit `testing` calls.
  */
 it("refuses concurrent framed bodies under the sync scope", async () => {
-  const extern = await initialize({ scope: "sync" });
+  const extern = initialize({ scope: "sync" });
   const { runTest } = wire(extern);
 
   let release!: () => void;
@@ -445,7 +442,7 @@ it("refuses concurrent framed bodies under the sync scope", async () => {
   });
 
   expect(() => runTest("second", () => undefined)).toThrow(
-    IllegalConcurrencyTestingError,
+    ExternError.IllegalConcurrencyTestingError,
   );
 
   release();
@@ -454,7 +451,7 @@ it("refuses concurrent framed bodies under the sync scope", async () => {
 
 describe("the rest of the surface", () => {
   it("frames each row of an `.each` table, with `row` alongside `extern`", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { harnessed, runAll } = wire(extern);
 
     const seen: Array<{ readonly row: number; readonly value: number }> = [];
@@ -478,7 +475,7 @@ describe("the rest of the surface", () => {
    * genuinely wants its extern blocks to run for real.
    */
   it("leaves a body registered through `framework` unframed", async () => {
-    const extern = await initialize({ scope: "async" });
+    const extern = initialize({ scope: "async" });
     const { harnessed, framework, runAll } = wire(extern);
 
     let value: { readonly id: number } | undefined;

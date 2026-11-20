@@ -1,221 +1,67 @@
+<div align="center">
+
+<picture><img src="https://docs.ghostry.dev/logo.png" alt="ghostry" width="96" height="96"></picture>
+
 # @ghostry/extern-extension-fabricator-v0
 
-[`@ghostry/fabricator`](https://github.com/ghostry-dev/fabricator) integration
-for [`@ghostry/extern`](https://github.com/ghostry-dev/extern).
+**Blocks typed by a fabricator schema fabricate their own value, for `@ghostry/extern`.**
 
-A `typed` extern block built from a fabricator schema becomes **self-mocking**:
-with no mock defined it fabricates a value from its own schema instead of
-throwing `NotMockedError`.
+[![npm](https://img.shields.io/badge/npm-ffffff.svg?style=for-the-badge&color=000000&logo=npm&logoColor=CB3837)](https://www.npmjs.com/package/@ghostry/extern-extension-fabricator-v0)
+[![npmx](https://img.shields.io/badge/npmx-ffffff.svg?style=for-the-badge&color=000000&logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTMiIGhlaWdodD0iMTUzIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxNTMgMTUzIj4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNi43MDQgOS45ODI3KSI+CiAgICA8cGF0aCBkPSJtMC45MzQ3NiA5Ny4yMDVoMjQuMDgxdjIzLjY5M2gtMjQuMDgxeiIgZmlsbD0iI2ZmZiI+PC9wYXRoPgogICAgPHBhdGggZD0ibTEwMy4xMi05LjIzMDctMy42MjExIDEwLjI0Ni00Ni4zMDkgMTMxLTMuNjIxMSAxMC4yNDZoMTUuNTM3bDMuNjIxMS0xMC4yNDYgMTEuNzE3LTMzLjE0OCAzOC4yMTEtMTA4LjF6IiBmaWxsPSIjNTFjOGZjIj48L3BhdGg+CiAgPC9nPgo8L3N2Zz4K&logoColor=51C8FC)](https://npmx.dev/package/@ghostry/extern-extension-fabricator-v0)
+[![jsr](https://img.shields.io/badge/jsr-ffffff?style=for-the-badge&color=000000&logo=jsr&logoColor=F7DF1E)](https://jsr.io/@ghostry/extern-extension-fabricator-v0)
+[![github](https://img.shields.io/badge/github-ffffff?style=for-the-badge&color=000000&logo=github&logoColor=ffffff)](https://github.com/ghostry-dev/extern)
+<picture><img alt="typescript" src="https://img.shields.io/badge/typescript-ffffff?style=for-the-badge&color=000000&logo=typescript&logoColor=3178C6"></picture>
+<picture><img alt="bun" src="https://img.shields.io/badge/bun-ffffff?style=for-the-badge&color=000000&logo=bun&logoColor=FBF0DF"></picture>
+<picture><img alt="node" src="https://img.shields.io/badge/node-ffffff?style=for-the-badge&color=000000&logo=nodedotjs&logoColor=5FA04E"></picture>
+<picture><img alt="fabricator" src="https://img.shields.io/badge/fabricator-ffffff.svg?style=for-the-badge&color=000000&logo=data:image/webp;base64,UklGRowDAABXRUJQVlA4WAoAAAAQAAAAPwAAPwAAQUxQSNwBAAABkEPbtqk9J7Zt27ZTpbJtO5VtO6ls27ZTObWd/MYde4yH+845N2gjwpHbtoFEVzO7e57ZRxB/mU8laCymo6Az0FhKT34ZT7juiE79/+eZwfzSH9BpuKB9f0Ym5suPJGeZB9NaF0xPlLX60FNJLjpTl2wrvjqB01hRCQMpahXvaLYDCe05j9FqzTCQWKvd0Lrqss6QwmSZuo7DPYel3QbPVIdtha+x60xux+FXWk/DWd48M2bNmtXYqugs5ibbwgfyjIc3TwqAyValwdwnW/gkk9lwpd2MsLj0Imm/ca23vlIFReg5Vwpsay1zRcNUmV0aTsks1xCTVWSkBnQlypjTmyent4x29VWck/0zxGgwVUXnlAbsEhmsIqW2RM6YsDsCuJFWctaGHOgtgdESBb8FvMxpNT9aXHXJ6ZAEIKYq2SykaHibX3LavgV6ks1C4sCtrKKHr3lb8ljiwZXsJF3XcFx4VFSqeyg+fGgrNDWYBMz6nCJnAtkwfxyanq9yip8Y8HZoZqbMd/w0AJ+WVubIe8FPCWCezWqY3i7ryHd+dvL9uLJ8YMuKBXPnL9967IEf8IugNmN7WRyxFcVBkfSLph6DdhzKsejGoxqTZlyKsenF5zr69EVl84mPAFZQOCCKAQAAsAsAnQEqQABAAD5hKo5FpCKhGv0WZEAGBLUAYP/7gbvkuL65RvkG0wb2ZvgH6Aehz+13WLPqoQLa5eoH2Va0EHUQ/4czFkGwHS1SADsG8YDH+DGIlFsrT2A2+qL95tOXN3WO6xIgAP7/COd/iBE/1l1T3wLGwB7vowaGH/lgWszIvnQUa7e5OGkvv280QsKCFFB84D4r+/uv60aIIHb0dn/3j+hZ6mkFgU/k4HuICwQ+n+OJPEZ0dP6Q6+shjs++1qiZ2gFXsIAOPvZ9lYhqYPmhfimHM3bb7i06blY/03VRs+XiBWbNShspo9f4N3//SdqyVvNPeb16avu0c8dc6rfwAylJQQs22odpaJv8aTJrXxZ16sO0x/hpUXyrYdHZVeeVJQXJk9hVQhTtCxR6hB9hqwG4vRMMfD6oj5nrEy/iUJCQzwz46+7c+5AAJ/1zDyIu2t08f2MnDNYuseBc4j15PhAFLyoAvWcfQzuAa1hwaa7NxsYP/8FPVf8hrBhhH1boCvkwbgAAAA=="></picture>
 
-## Setup
+[**Documentation**](https://docs.ghostry.dev/extern) &nbsp;·&nbsp; [**Extern guide**](https://docs.ghostry.dev/fabricator/guides/extern) &nbsp;·&nbsp; [**API Reference**](https://docs.ghostry.dev/extern/reference/api)
+
+</div>
+
+> [!WARNING]
+> v0 is in active development, and breaking changes occur frequently. Read the [changelog](https://docs.ghostry.dev/extern/changelog/extern-extension-fabricator-v0) before every update.
+
+A `typed` [extern](https://docs.ghostry.dev/extern) block whose identity is a [fabricator](https://docs.ghostry.dev/fabricator) schema becomes self-mocking: inside a testing block with no mock written, it fabricates a value from its own schema instead of throwing `NotMockedError`.
+
+## Install
+
+```bash
+npm install @ghostry/extern-extension-fabricator-v0 @ghostry/extern @ghostry/fabricator
+```
+
+## Example
 
 ```ts
 import { initialize as initializeExtern } from "@ghostry/extern";
-import { initialize as initializeFabricator } from "@ghostry/fabricator";
 import { fabricatorExtension } from "@ghostry/extern-extension-fabricator-v0";
+import { initialize as initializeFabricator } from "@ghostry/fabricator";
+import { expect, test } from "bun:test";
 
-const fabricator = initializeFabricator({ salt: "my-suite" });
-
-export const extern = initializeExtern({
-  extensions: [fabricatorExtension({ instance: fabricator })],
-});
-```
-
-The widening applies to **this instance alone**. An extern instance without the
-extension still rejects fabricator schemas as identities, exactly as before.
-
-Only a schema is an identity, never a built Fabricator. Given one, a block could either continue its streams or build afresh from its schema, and nothing at the call site would say which. Pass the schema it was built from instead.
-
-## Using it
-
-```ts
+const fabricator = initializeFabricator();
 const { T } = fabricator;
 
-const user = T.object({
+const extern = initializeExtern({
+  extensions: [fabricatorExtension({ instance: fabricator })],
+});
+
+const User = T.object({
   id: T.number,
   name: T.string.whereby({ length: { max: 10 } }),
 });
 
-const load = () => extern.typed.by(user).will(() => fetchUser());
-```
+declare function fetchUser(): { id: number; name: string };
+const loadUser = () => extern.typed.by(User).will(() => fetchUser());
 
-Inside a testing block, `load()` fabricates a `{ id, name }` with no mock
-written:
-
-```ts
-await extern.testing(() => {
-  expect(load()).toMatchObject({ id: expect.any(Number) });
+test("fabricates a user with no mock", async () => {
+  await extern.testing(() => {
+    expect(loadUser()).toMatchObject({ id: expect.any(Number) });
+  });
 });
 ```
 
-### Overriding outright
+A mock still wins where you write one, and `.produce()` shapes the fabricated value instead of replacing it. See the [Extern guide](https://docs.ghostry.dev/fabricator/guides/extern) in fabricator's docs for shaping, requiring explicit mocks, determinism across tests, and use with a test harness.
 
-```ts
-await extern.testing((mock) => {
-  mock(user).with({ id: 1, name: "Ada" });
-});
-```
+## License
 
-### Shaping the fabrication
-
-`produce()` fabricates and hands back a spy. Given a callback, it hands you the
-built Fabricator, so overrides are expressed in fabricator's own vocabulary —
-this package models none of it:
-
-```ts
-await extern.testing((mock) => {
-  mock(user).produce(({ via }) => via.fabricate({ name: "Ada" }));
-
-  expect(load().name).toBe("Ada");
-});
-```
-
-`via` is the built `Fabricator`, so an object's `fabricate(overrides)` carries
-fabricator's own `Override<Definition>` — nested objects, the `Omitted`
-sentinel, and all. Everything else it carries is reachable too, `trace` and
-`schema` included. Both `produce()` and `produce(fn)` **cache** per
-`(identity, name)`: the callback runs once, and reading the block twice in one
-test agrees.
-
-`via` is the built Fabricator for whichever kind the identity is, so the
-callback form is available on every schema — not object schemas alone. What
-differs is what that Fabricator accepts: an object's `fabricate` takes
-overrides, a `T.number`'s takes none. That is fabricator's own type saying so,
-not a rule this package imposes.
-
-### Requiring an explicit mock
-
-```ts
-fabricatorExtension({ instance: fabricator, unmocked: "error" });
-```
-
-Blocks then throw `NotMockedError` again unless mocked, while `produce()` still
-fabricates on demand.
-
-## Determinism
-
-Every testing block gets a fresh construction counter, inheriting the
-fabricator instance's salt and layering one foreknown constant onto it — never
-anything derived from where a block was written. That gives:
-
-- the same block fabricates the same value across independent `testing()` calls
-- the same schema exercised from a different test file draws the same value
-- construction order within one testing block determines unnamed values
-
-A user's own `new fabricator.Fabricator(schema)` written inside a testing block
-shares that block's source, but is a **separate draw** — successive ordinals in
-one stream — not a second view of the block's value.
-
-One written _outside_ the block draws from the enclosing scope instead. The
-constant layer is what keeps those two streams disjoint: a fabrication either
-side of a testing block can never collide with one inside it, at any ordinal.
-
-Two blocks over one schema in one test are a single production. Give them
-`named(...)` to make them distinct.
-
-A name does more than disambiguate. It lifts a block out of positional identity
-altogether: a named block's value is a function of its identity and its name,
-and of nothing else — so it holds still against whatever else the test
-fabricates ahead of it. Add a second fixture above it, or a helper that
-fabricates on its way past, and a named block keeps its value where an unnamed
-one moves. That is the trade the two forms make, and it is why the bullet above
-is scoped to unnamed values.
-
-### With a test harness
-
-`@ghostry/fabricator/harnessing` opens a `wrap` of its own per test, salted by
-that test's identity. This extension's scope then runs _inside_ it, and the two
-nest rather than compete: blocks inside `extern.testing` inherit the enclosing
-test's salt, and its clock along with it.
-
-That nesting is deliberate rather than automatic. A `wrap` lays its overlay over
-the instance it was called on, so a receiver bound outside the running block —
-which the configured instance always is — would restate from that instance and
-drop the enclosing scope. This extension composes against `context.scope()`, the
-frame in effect, which is why the per-test salt arrives.
-
-The construction ordinal does not carry through — every testing block
-re-instantiates, as above — but the scope's constant salt layer keeps the
-block's stream disjoint from the enclosing test's, so a `fabricate()` written
-either side of `extern.testing` never collides with one inside it.
-
-Extern's own harness integration (`@ghostry/extern/harnessing`) composes here
-too, and removes the `extern.testing` call: every test body is already a block.
-The order of the two integrations decides which scope encloses which, and so
-the order the salt layers nest in — and nothing else. Either order keeps every
-layer from `@ghostry/fabricator` `v0.0.6` onward and gives each test its own data; flipping it moves every fabricated value, so pick one and keep it.
-
-To derive fabricator data inside a test, fork the scope in effect rather than
-the instance itself. The per-test `wrap` governs the instance handed to
-`integration(...)` and its ancestors, never a fork of it, so in either order:
-
-```ts
-it("a", () => {
-  fabricator.fork({ salt: layer("A") });
-  // ["my-suite", "A"] — the same data in every test
-
-  fabricator.context.scope().fork({ salt: layer("A") });
-  // extern last:  ["my-suite", "test", "a", "@ghostry/extern", "A"]
-  // extern first: ["my-suite", "@ghostry/extern", "test", "a", "A"]
-});
-```
-
-The bare fork raises nothing; blocks themselves stay per test, which is what
-makes it easy to miss. `@ghostry/fabricator`'s harness guide covers the rule.
-
-The harness's own `context.fabricator` stays usable inside a block. It holds the
-harness's scope rather than this extension's, but a construction resolves
-against the innermost active frame, so it draws in step with the blocks around
-it.
-
-Both halves must come from **one `initialize()`**:
-
-```ts
-const fabricator = initializeFabricator({ salt: "my-suite" });
-
-// harness integration and extension, one lineage
-integration(fabricator);
-fabricatorExtension({ instance: fabricator });
-```
-
-A frame is visible only to instances on its own ancestral line. Two
-`initialize()` calls mint unrelated lineages and never see each other's frames
-— not even when handed the same `stack`, which selects a carrier and nothing
-more. So an extension pointed at a _second_ instance never observes the
-harness's frame and falls back to its own configuration: the per-test salt is
-lost and every test fabricates identically, with no error raised.
-
-One lineage is not enough on its own. The extension's instance must be the
-integration's instance or one of its ancestors: the per-test `wrap` never
-governs a fork of the integrated instance, so handing the extension such a fork
-fails the same way. Handing the _integration_ a fork of the extension's instance
-is fine.
-
-Determinism survives that; **distinctness** does not. The symptom is tests that
-write a fabricated id into shared state colliding with each other — passing
-individually, failing as a suite, and passing again under `.only`, which sends
-you looking for pollution rather than for the wiring.
-
-Where both instances are in scope, `root` catches the separate-lineage case — it
-is fabricator's answer to "same lineage?":
-
-```ts
-if (integrationInstance.root !== extensionInstance.root) {
-  throw new Error("fabricator instances are from different lineages");
-}
-```
-
-It does not catch a fork of the integrated instance handed to the extension,
-since that shares its root. What catches both — and works when the two halves
-are wired in separate modules, which is how this goes wrong in practice — is
-one guard test in the suite's own setup:
-fabricate the same schema under two different test identities and assert the
-values differ.
-
-## Requirements
-
-Needs an async stack carrier only for async testing bodies, which means any
-runtime with `node:async_hooks` — Bun, Node, and Deno. This extension runs the
-testing block inside fabricator's `wrap`, which refuses an async block under
-the synchronous carrier a browser bundle selects. A sync body works under that
-carrier too.
+[MIT](LICENSE) © Patrick Rebsch

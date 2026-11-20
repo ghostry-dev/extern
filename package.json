@@ -10,16 +10,22 @@
   },
   "scripts": {
     "build": "bun --cwd=pkg/extern run build && bun --cwd=pkg/extern-extension-fabricator-v0 run build",
-    "check": "bun --cwd=pkg/extern run check && bun --cwd=pkg/extern-extension-fabricator-v0 run check",
+    "typecheck": "bun run build && bun --cwd=pkg/extern run typecheck && bun --cwd=pkg/extern-extension-fabricator-v0 run typecheck && bun run typecheck:ts5 && bun run typecheck:jsr",
+    "typecheck:ts5": "bun --cwd=pkg/extern run typecheck:ts5 && bun --cwd=pkg/extern-extension-fabricator-v0 run typecheck:ts5",
+    "typecheck:jsr": "bun --cwd=pkg/extern run typecheck:jsr && bun --cwd=pkg/extern-extension-fabricator-v0 run typecheck:jsr",
     "test": "bun run build && bun --cwd=pkg/extern run test && bun --cwd=pkg/extern-extension-fabricator-v0 run test",
     "format": "bun fmt"
   },
   "devDependencies": {
+    "@rsdoctor/rspack-plugin": "^1.6.5",
     "@rslib/core": "^1.0.4",
     "@types/bun": "^1.4.4",
+    "deno": "2.9.6",
     "jsr": "^0.14.3",
     "npm": "^12.2.1",
+    "oxfmt": "^0.77.0",
     "sury": "^11.1.0-rc.0",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "typescript-5": "npm:typescript@^5.9.3"
   }
 }

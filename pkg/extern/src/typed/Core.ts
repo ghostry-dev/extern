@@ -1,5 +1,5 @@
 import type { Config } from "../Config.ts";
-import { NotMockedError } from "../Error.ts";
+import { ExternError } from "../Error.ts";
 import { approximately } from "../Mocking.ts";
 import { produce, shouldProduce } from "../Production.ts";
 import type { Execution } from "../Spy.ts";
@@ -30,7 +30,7 @@ export const will = <$Out, $In>(
       return produce(context, identity, params.named) as $Out;
     }
 
-    throw new NotMockedError();
+    throw new ExternError.NotMockedError();
   }
 
   const record = (outcome: Execution.Outcome): void => {

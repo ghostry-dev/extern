@@ -1,6 +1,6 @@
 import { initialize as initializeExtern } from "@ghostry/extern";
 import { initialize as initializeFabricator } from "@ghostry/fabricator";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import * as S from "sury";
 import { fabricatorExtension } from "../src/index.ts";
 
@@ -27,12 +27,12 @@ const user = T.object({
 /** A non-object schema: fabricator offers no per-call overrides for one. */
 const count = T.number;
 
-const extern = await initializeExtern({
+const extern = initializeExtern({
   scope: "async",
   extensions: [fabricatorExtension({ instance: fabricator })],
 });
 
-const bare = await initializeExtern({ scope: "async" });
+const bare = initializeExtern({ scope: "async" });
 
 describe("a fabricator schema as an identity", () => {
   it("is accepted, inferring the fabricated type", () => {

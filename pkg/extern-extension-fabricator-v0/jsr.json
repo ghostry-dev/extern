@@ -2,5 +2,5 @@
   "name": "@ghostry/extern-extension-fabricator-v0",
   "version": "0.0.7",
   "exports": "./src/index.ts",
-  "publish": { "exclude": ["test"] }
+  "publish": { "include": ["src", "README.md", "LICENSE", "jsr.json"] }
 }

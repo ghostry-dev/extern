@@ -2,6 +2,6 @@
   "name": "@ghostry/extern",
   "version": "0.0.17",
   "exports": { ".": "./src/index.ts", "./harnessing": "./src/harnessing.ts" },
-  "publish": { "exclude": ["test"] },
+  "publish": { "include": ["src", "README.md", "LICENSE", "jsr.json"] },
   "imports": { "#scope": "./src/Scope/Async.ts" }
 }

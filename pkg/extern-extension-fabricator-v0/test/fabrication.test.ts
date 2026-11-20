@@ -1,11 +1,10 @@
 import {
   initialize as initializeExtern,
-  NotMockedError,
-  UnusedMocksError,
   type Initialized,
+  ExternError,
 } from "@ghostry/extern";
 import { initialize as initializeFabricator } from "@ghostry/fabricator";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import * as S from "sury";
 import { fabricatorExtension, type FabricatorLambda } from "../src/index.ts";
 
@@ -29,8 +28,8 @@ const block = (extern: Initialized<FabricatorLambda>): User =>
     throw new Error("the original function must not run when producing");
   });
 
-describe("implicit fabrication", async () => {
-  const extern = await initializeExtern({
+describe("implicit fabrication", () => {
+  const extern = initializeExtern({
     scope: "async",
     extensions: [fabricatorExtension({ instance: fabricator })],
   });
@@ -50,7 +49,7 @@ describe("implicit fabrication", async () => {
         extern.typed.by(S.number).will(() => {
           throw new Error("unreachable");
         }),
-      ).toThrowError(NotMockedError);
+      ).toThrowError(ExternError.NotMockedError);
     });
   });
 
@@ -103,7 +102,7 @@ describe("implicit fabrication", async () => {
         extern.typed.by(built).will((): User => {
           throw new Error("unreachable");
         }),
-      ).toThrowError(NotMockedError);
+      ).toThrowError(ExternError.NotMockedError);
     });
   });
 
@@ -112,12 +111,12 @@ describe("implicit fabrication", async () => {
       extern.testing((mock) => {
         mock(schema).with({ id: 1, name: "unused" });
       }),
-    ).toThrowError(UnusedMocksError);
+    ).toThrowError(ExternError.UnusedMocksError);
   });
 });
 
-describe('`unmocked: "error"`', async () => {
-  const strict = await initializeExtern({
+describe('`unmocked: "error"`', () => {
+  const strict = initializeExtern({
     scope: "async",
     extensions: [
       fabricatorExtension({ instance: fabricator, unmocked: "error" }),
@@ -126,7 +125,7 @@ describe('`unmocked: "error"`', async () => {
 
   it("restores `NotMockedError` for a block that would otherwise fabricate", async () => {
     await strict.testing(() => {
-      expect(() => block(strict)).toThrowError(NotMockedError);
+      expect(() => block(strict)).toThrowError(ExternError.NotMockedError);
     });
   });
 
@@ -139,8 +138,8 @@ describe('`unmocked: "error"`', async () => {
   });
 });
 
-describe("an extern instance with no extension", async () => {
-  const bare = await initializeExtern({ scope: "async" });
+describe("an extern instance with no extension", () => {
+  const bare = initializeExtern({ scope: "async" });
 
   it("does not accept a fabricator schema, and does not fabricate", async () => {
     await bare.testing(() => {
@@ -149,7 +148,7 @@ describe("an extern instance with no extension", async () => {
         bare.typed.by(schema).will((): User => {
           throw new Error("unreachable");
         }),
-      ).toThrowError(NotMockedError);
+      ).toThrowError(ExternError.NotMockedError);
     });
   });
 });

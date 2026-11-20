@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import { initialize } from "../src/index.ts";
 import type { TypeLambda } from "../src/Extension.ts";
 import type { Mocker } from "../src/Mocking.ts";
@@ -39,7 +39,7 @@ const assertType = <_$T extends true>(): void => {};
 
 describe("the lambda `integration()` infers", () => {
   it("is the instance's own union, recovered exactly", async () => {
-    const extern = await initialize({
+    const extern = initialize({
       extensions: [boxedExtension(), taggedExtension()],
     });
 
@@ -75,7 +75,7 @@ describe("the lambda `integration()` infers", () => {
   });
 
   it("stays at `never` for an instance with no extensions", async () => {
-    const wired = integration(await initialize());
+    const wired = integration(initialize());
 
     assertType<
       Equals<

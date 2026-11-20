@@ -1,9 +1,9 @@
-import { describe, expect, expectTypeOf, it } from "bun:test";
+import { describe, expect, expectTypeOf, it } from "../index.ts";
 import { initialize, type Initialized } from "../../src/index.ts";
-import { DuplicateMockError, UnusedMocksError } from "../../src/Error.ts";
+import { ExternError } from "../../src/Error.ts";
 
-describe("`extern.testing`", async () => {
-  const extern = await initialize();
+describe("`extern.testing`", () => {
+  const extern = initialize();
 
   describe("for `extern.effect`", () => {
     const buildExample = (extern: Initialized) => {
@@ -41,7 +41,7 @@ describe("`extern.testing`", async () => {
         extern.testing((mock) => {
           mock.effect.named("abc").observe();
         }),
-      ).toThrowError(UnusedMocksError);
+      ).toThrowError(ExternError.UnusedMocksError);
     });
 
     describe("with options", () => {
@@ -157,7 +157,7 @@ describe("`extern.testing`", async () => {
               a.observe();
               b.observe();
             }),
-          ).toThrowError(DuplicateMockError);
+          ).toThrowError(ExternError.DuplicateMockError);
         });
       });
 

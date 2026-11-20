@@ -1,4 +1,4 @@
-import { DuplicateMockError } from "./Error.ts";
+import { ExternError } from "./Error.ts";
 import type { TypeLambda } from "./Extension.ts";
 import { IdentityMap, type Spy, type Spyable } from "./Spy.ts";
 import {
@@ -104,7 +104,7 @@ export const mocking = () => {
       let insertionPoint = 0;
       for (; insertionPoint < existing.length; insertionPoint++) {
         const next = existing[insertionPoint]!;
-        if (exactlyMatches(next)) throw new DuplicateMockError();
+        if (exactlyMatches(next)) throw new ExternError.DuplicateMockError();
         if (specificity >= next.specificity) break;
       }
 
@@ -171,7 +171,7 @@ export const mocking = () => {
       options: Options,
     ): Spy.ForEffect<$Strategy> => {
       const existing = spies.effects.get(named);
-      if (existing) throw new DuplicateMockError();
+      if (existing) throw new ExternError.DuplicateMockError();
 
       const spy = {
         named,

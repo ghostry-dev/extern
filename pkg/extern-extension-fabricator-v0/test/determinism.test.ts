@@ -1,6 +1,6 @@
 import { initialize as initializeExtern } from "@ghostry/extern";
 import { initialize as initializeFabricator } from "@ghostry/fabricator";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "./index.ts";
 import { fabricatorExtension } from "../src/index.ts";
 import { fabricateElsewhere } from "./fixtures/elsewhere.ts";
 
@@ -11,7 +11,7 @@ type Id = { id: number };
 const schema = T.object({ id: T.number });
 const other = T.object({ n: T.number });
 
-const extern = await initializeExtern({
+const extern = initializeExtern({
   scope: "async",
   extensions: [fabricatorExtension({ instance: fabricator })],
 });
