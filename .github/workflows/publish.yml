@@ -68,11 +68,15 @@ jobs:
           run-id: ${{ inputs.build-run-id }}
           repository: ${{ github.repository }}
 
+      ##
+      # A single-package repo's `pkg-dir` is `.`, and `upload-artifact`
+      # rejects an absolute path that contains `/./`, so it's dropped.
+      #
       - name: Construct tarball path
         id: tarball-path
-        run: >
-          echo "path=${{ github.workspace }}/${{ env.pkg-dir }}/${{ env.filename }}"
-          >> $GITHUB_OUTPUT
+        run: |
+          path="${{ github.workspace }}/${{ env.pkg-dir }}/${{ env.filename }}"
+          echo "path=$(echo "$path" | sed 's#/\./#/#g')" >> $GITHUB_OUTPUT
 
       - name: Pack
         working-directory: ${{ env.pkg-dir }}
